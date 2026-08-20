@@ -105,8 +105,13 @@
   var HORIZON_DAYS = 60;
 
   /* The crop's state on a given day: which window matters, how long is left,
-     and the one dated sentence the crate has to say. */
-  function evaluate(crop, shift, today) {
+     and the one dated sentence the crate has to say.
+     `conditions` is the live forecast when there is one: { min, frostRisk }. A
+     frost-tender crop whose calendar window is open is still held back while
+     frost is forecast, because the calendar is a pattern and the forecast is
+     what is actually happening. Without conditions nothing is gated and the
+     board states it is working from the calendar alone. */
+  function evaluate(crop, shift, today, conditions) {
     var wins = windowsFor(crop, shift);
     var open = null, next = null, nextIn = Infinity;
 
@@ -124,6 +129,14 @@
     var verb = crop.kind === 'perennial' ? 'Plant' : 'Sow';
     if (open) {
       var mode = open.win.mode === 'indoor' ? 'Start indoors' : verb;
+      var held = conditions && conditions.frostRisk && crop.tender && open.win.mode !== 'indoor';
+      if (held) {
+        return {
+          status: 'held', window: open.win, daysLeft: open.daysLeft, daysUntil: 0,
+          line: 'Window open, but ' + conditions.min + '°C forecast this week — hold',
+          closes: open.win.to, heldBy: 'frost'
+        };
+      }
       return {
         status: open.daysLeft <= URGENT_DAYS[crop.kind] ? 'urgent' : 'open',
         window: open.win, daysLeft: open.daysLeft, daysUntil: 0,
@@ -159,7 +172,7 @@
     return bar;
   }
 
-  var RANK = { urgent: 0, open: 1, soon: 2, later: 3, closed: 4 };
+  var RANK = { urgent: 0, open: 1, held: 2, soon: 3, later: 4, closed: 5 };
 
   /* Front of the stall is ordered by urgency, with ease breaking ties so a
      beginner's eye lands on something they can actually succeed with. Everything
@@ -167,7 +180,7 @@
      unrecognisably each time the month changes. */
   function order(evaluated) {
     var front = [], back = [];
-    evaluated.forEach(function (e) { (RANK[e.state.status] <= 1 ? front : back).push(e); });
+    evaluated.forEach(function (e) { (RANK[e.state.status] <= 2 ? front : back).push(e); });
     front.sort(function (a, b) {
       return (RANK[a.state.status] - RANK[b.state.status]) ||
              (a.state.daysLeft - b.state.daysLeft) ||
@@ -180,13 +193,20 @@
     return { front: front, back: back };
   }
 
-  function evaluateAll(crops, shift, today) {
-    return crops.map(function (c) { return { crop: c, state: evaluate(c, shift, today), bar: seasonBar(c, shift) }; });
+  function evaluateAll(crops, shift, today, conditions) {
+    return crops.map(function (c) {
+      return { crop: c, state: evaluate(c, shift, today, conditions), bar: seasonBar(c, shift) };
+    });
   }
 
   /* Why the front row is empty, said in the grower's terms rather than "no
      results". Heat and cold are different answers and get different sentences. */
-  function quietReason(monthIndex) {
+  function quietReason(monthIndex, familyName) {
+    if (familyName) {
+      return { season: 'filtered', filtered: true,
+        text: 'No ' + familyName + ' have a window open this month. Other crops do — this is the ' +
+              'filter talking, not your region or the season.' };
+    }
     if (monthIndex >= 6 && monthIndex <= 7) {
       return { season: 'heat', text: 'High summer. The ground is too hot for almost anything to germinate, and what does germinate bolts. This is a month for watering and harvesting, not for starting.' };
     }

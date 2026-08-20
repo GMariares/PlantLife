@@ -198,9 +198,10 @@ body {
   font-weight: 700;
 }
 .rail__month[data-today="true"]::after {
-  content: ''; position: absolute; left: 50%; bottom: 4px;
+  content: ''; position: absolute; left: 50%; bottom: 3px;
   width: 4px; height: 4px; margin-left: -2px; background: var(--ink-2);
 }
+.rail__month[data-today="true"][aria-pressed="true"]::after { display: none; }
 
 /* ── Family marks ─────────────────────────────────────────────────────── */
 .marks {
@@ -237,7 +238,7 @@ body {
 
 .crates {
   list-style: none; margin: 0; padding: 0;
-  display: grid; gap: var(--gap);
+  display: grid; gap: var(--gap); align-items: start;
   grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
 }
 .crates > li { display: flex; }
@@ -249,14 +250,18 @@ body {
   position: relative; display: flex; flex-direction: column;
   background: var(--slat);
   border: 1px solid var(--kraft-edge);
-  border-radius: 2px;
-  box-shadow: 0 2px 5px rgba(23,26,22,.13), 0 10px 22px -12px rgba(23,26,22,.3);
+  border-bottom: 3px solid var(--kraft-edge);
   text-align: left; font: inherit; color: var(--ink);
-  cursor: pointer; padding: 0; overflow: hidden;
-  transition: box-shadow .16s var(--ease-out), transform .16s var(--ease-out);
+  padding: 0; overflow: hidden;
+  transition: border-color .12s linear;
 }
-.crate:hover { box-shadow: 0 3px 8px rgba(23,26,22,.18), 0 16px 30px -14px rgba(23,26,22,.36); transform: translateY(-2px); }
-.crate:focus-visible { outline: 3px solid var(--f-fruiting); outline-offset: 3px; }
+.crate:hover { border-color: var(--ink); }
+.crate:focus-within { outline: 3px solid var(--f-fruiting); outline-offset: 2px; }
+.crate__take {
+  font: inherit; color: inherit; text-align: left; background: none;
+  border: 0; padding: 0; margin: 0; cursor: pointer; display: block; width: 100%;
+}
+.crate__take:focus-visible { outline: none; }
 
 /* The produce sitting in the crate. In season it is full colour; out of season
    it drains to zinc — but the wording, the position and the closed mark carry
@@ -266,7 +271,6 @@ body {
   background: var(--field);
   color: var(--chalk);
   padding: .7rem .85rem .6rem;
-  box-shadow: inset 0 -6px 10px -8px rgba(0,0,0,.6), inset 0 2px 0 rgba(255,255,255,.09);
   min-height: 5.35rem;
   display: flex; flex-direction: column; justify-content: flex-end;
 }
@@ -274,13 +278,13 @@ body {
   margin: 0; font-size: 1.1875rem; font-stretch: 78%; font-weight: 700;
   line-height: 1.02; letter-spacing: .005em; text-transform: uppercase;
 }
-.crate__pt { font-size: .75rem; font-stretch: 88%; font-weight: 400; opacity: .82; display: block; margin-top: .15rem; }
+.crate__pt { font-size: .75rem; font-stretch: 88%; font-weight: 400; display: block; margin-top: .15rem; color: inherit; }
 .crate--urgent .crate__name { font-size: 1.625rem; letter-spacing: -.01em; line-height: .96; }
 
 .crate__class {
   position: absolute; top: .55rem; right: .7rem;
   font-size: .625rem; font-stretch: 80%; font-weight: 600;
-  letter-spacing: .1em; text-transform: uppercase; opacity: .85;
+  letter-spacing: .1em; text-transform: uppercase;
 }
 
 .crate__label { padding: .7rem .85rem .8rem; background: rgba(238,241,231,.2); flex: 1 1 auto; }
@@ -306,24 +310,53 @@ body {
 .bar__key .k-sow { background: var(--ink-2); }
 .bar__key .k-harvest { background: color-mix(in srgb, var(--ink-2) 34%, #E7EADF); box-shadow: inset 0 0 0 1px var(--ink-2); }
 
-.crate__line { margin: 0; font-size: .875rem; font-stretch: 92%; line-height: 1.35; }
+.crate__line { margin: 0; font-size: .875rem; font-stretch: 92%; line-height: 1.35; min-height: 2.7em; }
 .crate--urgent .crate__line { font-size: 1rem; font-weight: 600; }
-.crate__foot {
+.crate__label { padding-bottom: .55rem; }
+.crate__more {
   display: flex; align-items: center; justify-content: space-between; gap: .5rem;
-  margin-top: .55rem; font-size: .75rem; font-stretch: 88%; color: var(--ink-2);
-  letter-spacing: .03em; text-transform: uppercase;
+  width: 100%; font: inherit; font-size: .75rem; font-stretch: 88%;
+  letter-spacing: .03em; text-transform: uppercase; color: var(--ink-2);
+  background: rgba(23,26,22,.05); border: 0; border-top: 1px solid var(--kraft-edge);
+  padding: .5rem .85rem; cursor: pointer; text-align: left;
 }
+.crate__more:hover { background: rgba(23,26,22,.1); color: var(--ink); }
+.crate__chev { width: 15px; height: 15px; flex: 0 0 auto; transition: transform .16s var(--ease-out); }
+.crate--open .crate__chev { transform: rotate(180deg); }
+.crate--open .crate__more { background: var(--ink); color: var(--ground); }
+.crate__span { margin-left: auto; }
+
+.crate__open { padding: .8rem .85rem .9rem; border-top: 1px solid var(--kraft-edge); background: rgba(238,241,231,.45); }
+.facts { margin: 0 0 .7rem; display: grid; gap: .3rem; }
+.facts > div { display: flex; gap: .5rem; align-items: baseline; }
+.facts dt {
+  flex: 0 0 4.6rem; font-size: .6875rem; font-stretch: 84%; font-weight: 600;
+  letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2);
+}
+.facts dd { margin: 0; font-size: .8125rem; font-stretch: 94%; }
+.crate__note { margin: 0; font-size: .875rem; font-stretch: 96%; line-height: 1.4; max-width: 44ch; }
+.crate__caveat {
+  display: flex; gap: .45rem; align-items: flex-start;
+  margin: .6rem 0 0; padding-top: .55rem; border-top: 1px solid var(--kraft-edge);
+  font-size: .75rem; font-stretch: 92%; color: var(--ink-2); max-width: 46ch;
+}
+.crate__caveat svg { width: 15px; height: 15px; flex: 0 0 auto; margin-top: .1rem; }
+
+/* Live conditions overruling the calendar: the window is open, the weather is not. */
+.crate--held .crate__produce { background: var(--zinc); color: var(--ink); }
+.crate--held .crate__line { font-weight: 600; }
+.crate--held { border-color: var(--ink); border-bottom-color: var(--ink); }
 .ease { display: inline-flex; gap: 3px; align-items: center; }
 .ease__pip { width: 7px; height: 7px; border: 1px solid var(--ink-2); border-radius: 50%; }
 .ease__pip--on { background: var(--ink-2); }
 
 /* Out of season. */
-.crate--closed { box-shadow: none; }
-.crate--closed .crate__produce { background: var(--zinc); color: #1E231C; box-shadow: inset 0 -6px 10px -8px rgba(0,0,0,.35); }
+.crate--closed { border-bottom-width: 1px; }
+.crate--closed .crate__produce { background: var(--zinc); color: var(--ink); }
 .crate--closed .crate__name { font-size: 1rem; }
 .crate--closed .bar__cell[data-b="sow"],
 .crate--closed .bar__cell[data-b="both"] { background: var(--mark); box-shadow: none; }
-.crate--closed:hover { transform: none; box-shadow: 0 2px 5px rgba(23,26,22,.13); }
+
 .crate--closed .crate__label { background: rgba(238,241,231,.14); }
 
 .crate--picked { border-color: var(--ink); border-width: 2px; }
@@ -366,6 +399,7 @@ body {
 .basket__count { font-size: 1.375rem; font-stretch: 104%; font-weight: 700; line-height: 1; letter-spacing: -.02em; }
 .basket__label { font-size: .75rem; font-stretch: 86%; letter-spacing: .06em; text-transform: uppercase; color: var(--chalk-dim); }
 .basket__next { flex: 1 1 16rem; min-width: 0; font-size: .875rem; font-stretch: 92%; }
+.basket__where { display: block; font-size: .6875rem; font-stretch: 88%; color: var(--chalk-dim); letter-spacing: .02em; margin-top: .1rem; }
 .basket__next b { font-weight: 600; }
 .basket__list { list-style: none; display: flex; flex-wrap: wrap; gap: .3rem; margin: 0; padding: 0; }
 .basket__chip {
@@ -409,7 +443,7 @@ body {
     border-top: 0; border-bottom: 3px solid transparent;
   }
   .rail__month[aria-pressed="true"] { border-bottom-color: var(--f-fruiting); }
-  .rail__month[data-today="true"]::after { bottom: 7px; }
+  .rail__month[data-today="true"]::after { bottom: 5px; }
   .marks {
     padding: .55rem 1rem .1rem;
     flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
@@ -424,21 +458,23 @@ body {
   .rail__inner { grid-template-columns: repeat(6, 1fr); }
   :root { --gap: 1rem; }
   .crates { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
-  .row--rest .crates { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+  .row--rest .crates { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
   .crate__produce { min-height: 4.4rem; padding: .55rem .6rem .5rem; }
   .crate__name { font-size: 1rem; }
   .crate--urgent .crate__name { font-size: 1.25rem; }
   .crate__label { padding: .55rem .6rem .65rem; }
   .crate__line { font-size: .8125rem; }
   .crate--urgent .crate__line { font-size: .875rem; }
-  .crate__foot { font-size: .625rem; gap: .35rem; letter-spacing: .02em; }
+  .crate__more { font-size: .625rem; gap: .3rem; letter-spacing: .02em; }
   .ease__pip { width: 6px; height: 6px; }
-  .row--rest .crate__produce { min-height: 3.2rem; }
-  .row--rest .crate__name { font-size: .8125rem; }
-  .row--rest .crate__pt, .row--rest .crate__class, .row--rest .bar__months { display: none; }
-  .row--rest .crate__foot { display: none; }
+  .row--rest .crate__produce { min-height: 3.9rem; }
+  .row--rest .crate__name { font-size: .875rem; }
   .row--rest .crate__line { font-size: .75rem; }
-  .row--rest .bar__cell { height: 12px; }
+  .row--rest .bar__cell { height: 13px; }
+  .crate__more { padding: .45rem .6rem; font-size: .6875rem; flex-wrap: wrap; row-gap: .15rem; }
+  .crate__more .ease { flex: 1 0 100%; }
+  .crate__span { margin-left: 0; }
+  .facts dt { flex-basis: 4rem; }
   .basket__inner { padding: .45rem 1rem; gap: .35rem .7rem; }
   .basket__inner > div:first-child { display: flex; align-items: baseline; gap: .35rem; }
   .basket__count { font-size: 1.125rem; }

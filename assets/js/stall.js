@@ -31,7 +31,8 @@
     cloud: 'M7 18h10a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.6A3.6 3.6 0 0 0 7 18Z',
     rain: 'M7 15h10a4 4 0 0 0 .4-8 6 6 0 0 0-11.5 1.6A3.6 3.6 0 0 0 7 15Z M8.5 18.5 7.5 21 M12 18.5 11 21 M15.5 18.5 14.5 21',
     frost: 'M12 3v18 M4.2 7.5l15.6 9 M19.8 7.5l-15.6 9 M9 5l3 2 3-2 M9 19l3-2 3 2',
-    fog: 'M4 9h16 M4 13h16 M6 17h12'
+    fog: 'M4 9h16 M4 13h16 M6 17h12',
+    chev: 'M6 9.5 12 15.5 18 9.5'
   };
 
   function icon(name, cls) {
@@ -64,6 +65,7 @@
     month: new Date().getMonth(),
     monthPinned: false,
     family: 'all',
+    opened: null,
     weather: null,       // { temp, code, frostRisk, min }
     weatherFailed: false,
     locating: false,
@@ -209,7 +211,14 @@
   function visibleCrops() {
     return state.family === 'all' ? CROPS : CROPS.filter(function (c) { return c.family === state.family; });
   }
-  function evaluated() { return S.evaluateAll(visibleCrops(), shift(), referenceDay()); }
+  /* Conditions only gate the CURRENT month: a forecast says nothing about
+     what April will be like, so scrubbing away from now drops the gate. */
+  function conditions() {
+    if (!state.weather) return null;
+    if (state.monthPinned && state.month !== new Date().getMonth()) return null;
+    return { min: state.weather.min, frostRisk: state.weather.frostRisk };
+  }
+  function evaluated() { return S.evaluateAll(visibleCrops(), shift(), referenceDay(), conditions()); }
 
   // ── Rendering ────────────────────────────────────────────────────────────
   var el = {};
@@ -225,7 +234,7 @@
     return '' +
       '<div class="board__place">' +
         '<h1 class="ask__head">Where are you growing?</h1>' +
-        '<p class="ask__sub">Every date this stall shows is computed from your last frost, your first frost, and today’s weather. Without a place, it is only a printed calendar.</p>' +
+        '<p class="ask__sub">Sowing dates are computed from your last and first frost; this week’s forecast holds back anything tender. Without a place, it is only a printed calendar.</p>' +
         '<div class="ask__row">' +
           '<button class="btn btn--solid" type="button" data-act="locate"' + (state.locating ? ' disabled' : '') + '>' +
             icon('pin') + (state.locating ? 'Finding you…' : 'Use my location') + '</button>' +
@@ -266,7 +275,11 @@
     }
     if (f.overridden) notes.push('Using the frost dates you set.');
     if (state.weatherFailed) notes.push('Live conditions are unavailable right now — dates below come from the regional calendar alone, not from today’s weather.');
-    if (w && w.frostRisk) notes.push('Frost forecast this week: ' + w.min + '°C. Hold anything tender.');
+    if (w && w.frostRisk) {
+      var scrubbed = state.monthPinned && state.month !== new Date().getMonth();
+      notes.push('Frost forecast this week: ' + w.min + '°C. Hold anything tender.' +
+        (scrubbed ? ' That is this week — it is not being applied to ' + S.MONTH_FULL[state.month] + '.' : ''));
+    }
 
     return '' +
       '<div class="board__place">' +
@@ -325,12 +338,15 @@
 
   function crateHTML(e) {
     var c = e.crop, st = e.state;
-    var open = st.status === 'urgent' || st.status === 'open';
+    var open = st.status === 'urgent' || st.status === 'open' || st.status === 'held';
     var picked = state.basket.indexOf(c.id) !== -1;
+    var isOpen = state.opened === c.id;
     var cls = ['crate'];
     if (st.status === 'urgent') cls.push('crate--urgent');
+    if (st.status === 'held') cls.push('crate--held');
     if (!open) cls.push('crate--closed');
     if (picked) cls.push('crate--picked');
+    if (isOpen) cls.push('crate--open');
 
     var pips = [1, 2, 3].map(function (n) {
       return '<span class="ease__pip' + (n <= (4 - c.ease) ? ' ease__pip--on' : '') + '"></span>';
@@ -349,41 +365,73 @@
       return '<span' + (i === nowMonth ? ' data-now="true"' : '') + '>' + m.charAt(0) + '</span>';
     }).join('');
 
-    return '<li><button class="' + cls.join(' ') + '" type="button" data-act="pick" data-id="' + c.id + '"' +
-      ' style="--field:var(--f-' + c.family + ');--mark:var(--m-' + c.family + ')"' +
+    var wins = S.windowsFor(c, shift()).map(function (w) {
+      var verb = w.mode === 'indoor' ? 'Start indoors' : (c.kind === 'perennial' ? 'Plant' : 'Sow');
+      return verb + ' ' + S.label(w.from) + ' – ' + S.label(w.to);
+    }).join('; ');
+    var harv = S.harvestsFor(c, shift()).map(function (w) {
+      return S.label(w.from) + ' – ' + S.label(w.to);
+    }).join('; ');
+
+    return '<li><article class="' + cls.join(' ') + '"' +
+      ' style="--field:var(--f-' + c.family + ');--mark:var(--m-' + c.family + ')">' +
+      '<button class="crate__take" type="button" data-act="pick" data-id="' + c.id + '"' +
       ' aria-pressed="' + picked + '"' +
-      ' aria-label="' + esc(c.name + '. ' + st.line + '. ' + (picked ? 'In your garden.' : 'Add to your garden.')) + '">' +
-      '<span class="crate__produce">' +
-        '<span class="crate__class">' + (c.kind === 'perennial' ? 'perennial' : 'annual') + '</span>' +
-        '<span class="crate__name">' + esc(c.name) + '<span class="crate__pt">' + esc(c.pt) + '</span></span>' +
-      '</span>' +
-      '<span class="crate__label">' +
-        '<span class="bar" aria-hidden="true">' + bar + '</span>' +
-        '<span class="bar__months" aria-hidden="true">' + months + '</span>' +
-        '<span class="crate__line">' + esc(st.line) + '</span>' +
-        '<span class="crate__foot"><span class="ease" title="' + easeWord + '">' + pips + ' ' + easeWord + '</span>' +
-        '<span>' + span + '</span></span>' +
-      '</span>' +
-      (picked ? '<span class="crate__picked">' + icon('check') + 'In garden</span>' : '') +
-      '</button></li>';
+      ' aria-label="' + esc((picked ? 'Remove ' : 'Add ') + c.name + ' ' + (picked ? 'from' : 'to') +
+        ' your garden. ' + st.line) + '">' +
+        '<span class="crate__produce">' +
+          '<span class="crate__class">' + (c.kind === 'perennial' ? 'perennial' : 'annual') + '</span>' +
+          '<span class="crate__name">' + esc(c.name) + '<span class="crate__pt">' + esc(c.pt) + '</span></span>' +
+        '</span>' +
+        '<span class="crate__label">' +
+          '<span class="bar" aria-hidden="true">' + bar + '</span>' +
+          '<span class="bar__months" aria-hidden="true">' + months + '</span>' +
+          '<span class="crate__line">' + esc(st.line) + '</span>' +
+        '</span>' +
+        (picked ? '<span class="crate__picked">' + icon('check') + 'In garden</span>' : '') +
+      '</button>' +
+      '<button class="crate__more" type="button" data-act="open" data-id="' + c.id + '"' +
+        ' aria-expanded="' + isOpen + '">' +
+        '<span class="ease" title="' + easeWord + '">' + pips + ' ' + easeWord + '</span>' +
+        '<span class="crate__span">' + span + '</span>' +
+        icon('chev', 'crate__chev') +
+      '</button>' +
+      (isOpen ? '<div class="crate__open">' +
+        '<dl class="facts">' +
+          '<div><dt>' + (c.kind === 'perennial' ? 'Plant' : 'Sow') + '</dt><dd>' + esc(wins) + '</dd></div>' +
+          '<div><dt>Harvest</dt><dd>' + esc(harv) + '</dd></div>' +
+          '<div><dt>Spacing</dt><dd>' + c.spacing + ' cm apart</dd></div>' +
+          '<div><dt>Water</dt><dd>' + c.water + '</dd></div>' +
+          '<div><dt>Light</dt><dd>' + (c.sun === 'full' ? 'full sun' : 'sun or part shade') + '</dd></div>' +
+        '</dl>' +
+        '<p class="crate__note">' + esc(c.note) + '</p>' +
+        (c.confidence === 'medium'
+          ? '<p class="crate__caveat">' + icon('frost') + 'Timing for this crop varies widely across the region — treat these dates as a starting point, not a fixed schedule.</p>'
+          : '') +
+      '</div>' : '') +
+      '</article></li>';
   }
 
   function quietHTML(back) {
-    var reason = S.quietReason(state.month);
+    var famLabel = state.family === 'all' ? null : FAMILIES[state.family].plural;
+    var reason = S.quietReason(state.month, famLabel);
     var soonest = back.slice().sort(function (a, b) {
       return (a.state.daysUntil === null ? 9e9 : a.state.daysUntil) - (b.state.daysUntil === null ? 9e9 : b.state.daysUntil);
     })[0];
-    var famWord = state.family === 'all' ? '' : ' ' + FAMILIES[state.family].name.toLowerCase();
-    var famNote = state.family === 'all' ? '' : ' ' + FAMILIES[state.family].note;
+    var head = famLabel
+      ? 'No ' + famLabel + ' to start in ' + S.MONTH_FULL[state.month]
+      : 'Nothing to start in ' + S.MONTH_FULL[state.month];
     return '<div class="quiet">' +
-      '<h3 class="quiet__head">Nothing' + esc(famWord) + ' to start in ' + S.MONTH_FULL[state.month] + '</h3>' +
-      '<p class="quiet__text">' + esc(reason.text + famNote) + '</p>' +
+      '<h3 class="quiet__head">' + esc(head) + '</h3>' +
+      '<p class="quiet__text">' + esc(reason.text) + '</p>' +
+      (famLabel ? '<p class="quiet__text">' + esc(FAMILIES[state.family].note) + '</p>' : '') +
       (soonest ? '<div class="quiet__next">' +
         '<span class="quiet__label">Next window</span>' +
         '<span class="quiet__crop">' + esc(soonest.crop.name) + '</span>' +
         '<span>' + esc(soonest.state.line) + '</span>' +
         '<button class="btn btn--dark" type="button" data-act="month" data-i="' +
           (S.fromDoy(soonest.state.opens || 1).month - 1) + '">Go to that month</button>' +
+        (famLabel ? '<button class="btn btn--dark" type="button" data-act="family" data-f="all">Show all crops</button>' : '') +
       '</div>' : '') +
       '</div>';
   }
@@ -423,8 +471,9 @@
     if (picked.length) {
       var sh = shift(), today = referenceDay();
       picked.forEach(function (c) {
-        var st = S.evaluate(c, sh, today);
-        var rank = (st.status === 'urgent' || st.status === 'open') ? st.daysLeft : 1000 + (st.daysUntil || 999);
+        var st = S.evaluate(c, sh, today, conditions());
+        var rank = (st.status === 'urgent' || st.status === 'open') ? st.daysLeft
+          : st.status === 'held' ? 500 + st.daysLeft : 1000 + (st.daysUntil || 999);
         if (!next || rank < next.rank) next = { crop: c, state: st, rank: rank };
       });
     }
@@ -433,8 +482,11 @@
       '<div><div class="basket__count">' + picked.length + '</div>' +
       '<div class="basket__label">' + (picked.length === 1 ? 'crop' : 'crops') + ' in your garden</div></div>' +
       '<div class="basket__next">' +
-        (next ? '<b>Next:</b> ' + esc(next.crop.name.toLowerCase()) + ' — ' + esc(next.state.line.replace(/^Sow now — window closes/, 'sow by').replace(/^Plant now — window closes/, 'plant by'))
-              : 'Pick a crate and your garden starts here. It lives in this browser only — no account, no sync.') +
+        (next ? '<b>Next:</b> ' + esc(next.crop.name.toLowerCase()) + ' — ' +
+                esc(next.state.line.replace(/^Sow now — window closes/, 'sow by')
+                                   .replace(/^Plant now — window closes/, 'plant by'))
+              : 'Pick a crate and your garden starts here.') +
+        '<span class="basket__where">Saved in this browser only — no account, no sync.</span>' +
       '</div>' +
       (picked.length ? '<ul class="basket__list">' + picked.map(function (c) {
         return '<li><button class="basket__chip" type="button" data-act="pick" data-id="' + c.id + '"' +
@@ -514,6 +566,12 @@
     else if (act === 'family') {
       state.family = t.dataset.f;
       withRelay(function () { render(); });
+    }
+    else if (act === 'open') {
+      state.opened = state.opened === t.dataset.id ? null : t.dataset.id;
+      renderStall();
+      var still = document.querySelector('[data-act="open"][data-id="' + state.opened + '"]');
+      if (still) still.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
     else if (act === 'pick') {
       var id = t.dataset.id, at = state.basket.indexOf(id);

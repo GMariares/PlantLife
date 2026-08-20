@@ -30,14 +30,14 @@
   'use strict';
 
   var FAMILIES = {
-    fruiting: { name: 'Fruiting',   note: 'Warmth-driven. Nothing goes out before the last frost.' },
-    leaf:     { name: 'Leaves',     note: 'Cool-season. Most bolt and turn bitter in real heat.' },
-    brassica: { name: 'Brassicas',  note: 'Sown in the heat of summer to stand through winter.' },
-    root:     { name: 'Roots',      note: 'Direct-sown; they resent being moved.' },
-    allium:   { name: 'Onions',     note: 'Long season, daylength-sensitive, very forgiving.' },
-    legume:   { name: 'Legumes',    note: 'Autumn-sown here. They fix their own nitrogen.' },
-    herb:     { name: 'Herbs',      note: 'Small space, high return, mostly drought-tolerant.' },
-    fruit:    { name: 'Fruit',      note: 'Planted, not sown. You are buying years, not weeks.' }
+    fruiting: { name: 'Fruiting', plural: 'fruiting crops',   note: 'Warmth-driven. Nothing goes out before the last frost.' },
+    leaf:     { name: 'Leaves', plural: 'leafy crops',     note: 'Cool-season. Most bolt and turn bitter in real heat.' },
+    brassica: { name: 'Brassicas', plural: 'brassicas',  note: 'Sown in the heat of summer to stand through winter.' },
+    root:     { name: 'Roots', plural: 'root crops',      note: 'Direct-sown; they resent being moved.' },
+    allium:   { name: 'Onions', plural: 'onions or garlic',     note: 'Long season, daylength-sensitive, very forgiving.' },
+    legume:   { name: 'Legumes', plural: 'legumes',    note: 'Autumn-sown here. They fix their own nitrogen.' },
+    herb:     { name: 'Herbs', plural: 'herbs',      note: 'Small space, high return, mostly drought-tolerant.' },
+    fruit:    { name: 'Fruit', plural: 'fruit trees or bushes',      note: 'Planted, not sown. You are buying years, not weeks.' }
   };
 
   function a(id, name, pt, family, ease, tender, sow, harvest, dtm, spacing, water, sun, note, confidence) {
