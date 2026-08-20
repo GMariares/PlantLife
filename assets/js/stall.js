@@ -390,7 +390,7 @@
       return S.label(w.from) + ' – ' + S.label(w.to);
     }).join('; ');
 
-    return '<li><article class="' + cls.join(' ') + '"' +
+    return '<li><article class="' + cls.join(' ') + '" data-crop="' + c.id + '"' +
       ' style="--field:var(--f-' + c.family + ');--mark:var(--m-' + c.family + ')">' +
       '<button class="crate__take" type="button" data-act="pick" data-id="' + c.id + '"' +
       ' aria-pressed="' + picked + '"' +
@@ -554,13 +554,13 @@
     var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduced) { fn(); return; }
     var before = {};
-    document.querySelectorAll('.crate[data-id]').forEach(function (n) {
-      before[n.dataset.id] = n.getBoundingClientRect();
+    document.querySelectorAll('.crate[data-crop]').forEach(function (n) {
+      before[n.dataset.crop] = n.getBoundingClientRect();
     });
     fn();
     var moved = [];
-    document.querySelectorAll('.crate[data-id]').forEach(function (n) {
-      var b = before[n.dataset.id];
+    document.querySelectorAll('.crate[data-crop]').forEach(function (n) {
+      var b = before[n.dataset.crop];
       if (!b) return;
       var a = n.getBoundingClientRect();
       var dx = b.left - a.left, dy = b.top - a.top;

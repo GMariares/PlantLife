@@ -1,0 +1,746 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-20T11:56:50Z",
+  "title": "Design System: PlantLife",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Limewash Ground",
+        "canonical": "oklch(92.3% 0.012 121.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.006 121.7)",
+          "oklch(26.4% 0.007 121.7)",
+          "oklch(37.9% 0.008 121.7)",
+          "oklch(49.3% 0.009 121.7)",
+          "oklch(60.7% 0.010 121.7)",
+          "oklch(72.1% 0.011 121.7)",
+          "oklch(83.6% 0.011 121.7)",
+          "oklch(95.0% 0.012 121.7)"
+        ]
+      },
+      "ground-deep": {
+        "role": "neutral",
+        "displayName": "Deep Limewash",
+        "canonical": "oklch(88.5% 0.015 123.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.008 123.1)",
+          "oklch(26.4% 0.009 123.1)",
+          "oklch(37.9% 0.010 123.1)",
+          "oklch(49.3% 0.011 123.1)",
+          "oklch(60.7% 0.012 123.1)",
+          "oklch(72.1% 0.014 123.1)",
+          "oklch(83.6% 0.015 123.1)",
+          "oklch(95.0% 0.014 123.1)"
+        ]
+      },
+      "slate": {
+        "role": "neutral",
+        "displayName": "Painted Slate",
+        "canonical": "oklch(24.9% 0.015 136.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.014 136.7)",
+          "oklch(26.4% 0.015 136.7)",
+          "oklch(37.9% 0.014 136.7)",
+          "oklch(49.3% 0.013 136.7)",
+          "oklch(60.7% 0.012 136.7)",
+          "oklch(72.1% 0.011 136.7)",
+          "oklch(83.6% 0.010 136.7)",
+          "oklch(95.0% 0.009 136.7)"
+        ]
+      },
+      "slate-2": {
+        "role": "neutral",
+        "displayName": "Slate Inset",
+        "canonical": "oklch(30.8% 0.017 141.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.015 141.7)",
+          "oklch(26.4% 0.017 141.7)",
+          "oklch(37.9% 0.016 141.7)",
+          "oklch(49.3% 0.015 141.7)",
+          "oklch(60.7% 0.014 141.7)",
+          "oklch(72.1% 0.013 141.7)",
+          "oklch(83.6% 0.012 141.7)",
+          "oklch(95.0% 0.010 141.7)"
+        ]
+      },
+      "chalk": {
+        "role": "neutral",
+        "displayName": "Chalk",
+        "canonical": "oklch(95.3% 0.014 120.3)",
+        "tonalRamp": [
+          "oklch(15.0% 0.007 120.3)",
+          "oklch(26.4% 0.008 120.3)",
+          "oklch(37.9% 0.009 120.3)",
+          "oklch(49.3% 0.010 120.3)",
+          "oklch(60.7% 0.011 120.3)",
+          "oklch(72.1% 0.012 120.3)",
+          "oklch(83.6% 0.013 120.3)",
+          "oklch(95.0% 0.014 120.3)"
+        ]
+      },
+      "chalk-dim": {
+        "role": "neutral",
+        "displayName": "Dim Chalk",
+        "canonical": "oklch(77.1% 0.023 132.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.014 132.6)",
+          "oklch(26.4% 0.016 132.6)",
+          "oklch(37.9% 0.018 132.6)",
+          "oklch(49.3% 0.019 132.6)",
+          "oklch(60.7% 0.021 132.6)",
+          "oklch(72.1% 0.022 132.6)",
+          "oklch(83.6% 0.022 132.6)",
+          "oklch(95.0% 0.021 132.6)"
+        ]
+      },
+      "kraft-edge": {
+        "role": "neutral",
+        "displayName": "Kraft Edge",
+        "canonical": "oklch(69.5% 0.040 88.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.027 88.5)",
+          "oklch(26.4% 0.030 88.5)",
+          "oklch(37.9% 0.032 88.5)",
+          "oklch(49.3% 0.035 88.5)",
+          "oklch(60.7% 0.038 88.5)",
+          "oklch(72.1% 0.039 88.5)",
+          "oklch(83.6% 0.037 88.5)",
+          "oklch(95.0% 0.034 88.5)"
+        ]
+      },
+      "zinc": {
+        "role": "neutral",
+        "displayName": "Drained Zinc",
+        "canonical": "oklch(69.5% 0.021 133.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.014 133.1)",
+          "oklch(26.4% 0.016 133.1)",
+          "oklch(37.9% 0.017 133.1)",
+          "oklch(49.3% 0.018 133.1)",
+          "oklch(60.7% 0.020 133.1)",
+          "oklch(72.1% 0.021 133.1)",
+          "oklch(83.6% 0.019 133.1)",
+          "oklch(95.0% 0.018 133.1)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(21.3% 0.009 137.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.009 137.8)",
+          "oklch(26.4% 0.009 137.8)",
+          "oklch(37.9% 0.008 137.8)",
+          "oklch(49.3% 0.007 137.8)",
+          "oklch(60.7% 0.007 137.8)",
+          "oklch(72.1% 0.006 137.8)",
+          "oklch(83.6% 0.006 137.8)",
+          "oklch(95.0% 0.005 137.8)"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Ink Two",
+        "canonical": "oklch(45.7% 0.022 135.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.018 135.1)",
+          "oklch(26.4% 0.019 135.1)",
+          "oklch(37.9% 0.021 135.1)",
+          "oklch(49.3% 0.022 135.1)",
+          "oklch(60.7% 0.020 135.1)",
+          "oklch(72.1% 0.019 135.1)",
+          "oklch(83.6% 0.017 135.1)",
+          "oklch(95.0% 0.015 135.1)"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Ink Three",
+        "canonical": "oklch(38.1% 0.019 136.2)",
+        "tonalRamp": [
+          "oklch(15.0% 0.016 136.2)",
+          "oklch(26.4% 0.018 136.2)",
+          "oklch(37.9% 0.019 136.2)",
+          "oklch(49.3% 0.018 136.2)",
+          "oklch(60.7% 0.016 136.2)",
+          "oklch(72.1% 0.015 136.2)",
+          "oklch(83.6% 0.014 136.2)",
+          "oklch(95.0% 0.013 136.2)"
+        ]
+      },
+      "caution-amber": {
+        "role": "secondary",
+        "displayName": "Caution Amber",
+        "canonical": "oklch(83.3% 0.117 88.0)",
+        "tonalRamp": [
+          "oklch(15.0% 0.069 88.0)",
+          "oklch(26.4% 0.077 88.0)",
+          "oklch(37.9% 0.085 88.0)",
+          "oklch(49.3% 0.093 88.0)",
+          "oklch(60.7% 0.101 88.0)",
+          "oklch(72.1% 0.109 88.0)",
+          "oklch(83.6% 0.117 88.0)",
+          "oklch(95.0% 0.109 88.0)"
+        ]
+      },
+      "field-fruiting": {
+        "role": "primary",
+        "displayName": "Tomato Red",
+        "canonical": "oklch(54.2% 0.186 27.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.142 27.4)",
+          "oklch(26.4% 0.155 27.4)",
+          "oklch(37.9% 0.168 27.4)",
+          "oklch(49.3% 0.181 27.4)",
+          "oklch(60.7% 0.179 27.4)",
+          "oklch(72.1% 0.166 27.4)",
+          "oklch(83.6% 0.153 27.4)",
+          "oklch(95.0% 0.140 27.4)"
+        ]
+      },
+      "field-leaf": {
+        "role": "primary",
+        "displayName": "Field Green",
+        "canonical": "oklch(50.5% 0.125 139.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.098 139.8)",
+          "oklch(26.4% 0.107 139.8)",
+          "oklch(37.9% 0.116 139.8)",
+          "oklch(49.3% 0.124 139.8)",
+          "oklch(60.7% 0.117 139.8)",
+          "oklch(72.1% 0.109 139.8)",
+          "oklch(83.6% 0.100 139.8)",
+          "oklch(95.0% 0.092 139.8)"
+        ]
+      },
+      "field-brassica": {
+        "role": "primary",
+        "displayName": "Brassica Blue",
+        "canonical": "oklch(45.8% 0.094 250.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.077 250.6)",
+          "oklch(26.4% 0.083 250.6)",
+          "oklch(37.9% 0.090 250.6)",
+          "oklch(49.3% 0.092 250.6)",
+          "oklch(60.7% 0.086 250.6)",
+          "oklch(72.1% 0.079 250.6)",
+          "oklch(83.6% 0.073 250.6)",
+          "oklch(95.0% 0.066 250.6)"
+        ]
+      },
+      "field-root": {
+        "role": "primary",
+        "displayName": "Earth Orange",
+        "canonical": "oklch(52.8% 0.120 58.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.093 58.6)",
+          "oklch(26.4% 0.101 58.6)",
+          "oklch(37.9% 0.109 58.6)",
+          "oklch(49.3% 0.117 58.6)",
+          "oklch(60.7% 0.114 58.6)",
+          "oklch(72.1% 0.106 58.6)",
+          "oklch(83.6% 0.098 58.6)",
+          "oklch(95.0% 0.090 58.6)"
+        ]
+      },
+      "field-allium": {
+        "role": "primary",
+        "displayName": "Allium Violet",
+        "canonical": "oklch(48.9% 0.108 320.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.086 320.1)",
+          "oklch(26.4% 0.093 320.1)",
+          "oklch(37.9% 0.101 320.1)",
+          "oklch(49.3% 0.108 320.1)",
+          "oklch(60.7% 0.100 320.1)",
+          "oklch(72.1% 0.093 320.1)",
+          "oklch(83.6% 0.086 320.1)",
+          "oklch(95.0% 0.078 320.1)"
+        ]
+      },
+      "field-legume": {
+        "role": "primary",
+        "displayName": "Legume Olive",
+        "canonical": "oklch(51.2% 0.104 106.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.081 106.8)",
+          "oklch(26.4% 0.089 106.8)",
+          "oklch(37.9% 0.096 106.8)",
+          "oklch(49.3% 0.103 106.8)",
+          "oklch(60.7% 0.098 106.8)",
+          "oklch(72.1% 0.091 106.8)",
+          "oklch(83.6% 0.084 106.8)",
+          "oklch(95.0% 0.077 106.8)"
+        ]
+      },
+      "field-herb": {
+        "role": "primary",
+        "displayName": "Herb Green",
+        "canonical": "oklch(43.7% 0.068 156.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.056 156.4)",
+          "oklch(26.4% 0.061 156.4)",
+          "oklch(37.9% 0.066 156.4)",
+          "oklch(49.3% 0.066 156.4)",
+          "oklch(60.7% 0.061 156.4)",
+          "oklch(72.1% 0.056 156.4)",
+          "oklch(83.6% 0.052 156.4)",
+          "oklch(95.0% 0.047 156.4)"
+        ]
+      },
+      "field-fruit": {
+        "role": "primary",
+        "displayName": "Fruit Wine",
+        "canonical": "oklch(44.8% 0.145 3.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.119 3.7)",
+          "oklch(26.4% 0.129 3.7)",
+          "oklch(37.9% 0.139 3.7)",
+          "oklch(49.3% 0.141 3.7)",
+          "oklch(60.7% 0.131 3.7)",
+          "oklch(72.1% 0.121 3.7)",
+          "oklch(83.6% 0.111 3.7)",
+          "oklch(95.0% 0.101 3.7)"
+        ]
+      },
+      "mark-fruiting": {
+        "role": "primary",
+        "displayName": "Tomato Red Mark",
+        "canonical": "oklch(51.7% 0.177 27.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.138 27.5)",
+          "oklch(26.4% 0.150 27.5)",
+          "oklch(37.9% 0.162 27.5)",
+          "oklch(49.3% 0.174 27.5)",
+          "oklch(60.7% 0.167 27.5)",
+          "oklch(72.1% 0.155 27.5)",
+          "oklch(83.6% 0.143 27.5)",
+          "oklch(95.0% 0.131 27.5)"
+        ]
+      },
+      "mark-leaf": {
+        "role": "primary",
+        "displayName": "Field Green Mark",
+        "canonical": "oklch(48.3% 0.119 139.5)",
+        "tonalRamp": [
+          "oklch(15.0% 0.095 139.5)",
+          "oklch(26.4% 0.103 139.5)",
+          "oklch(37.9% 0.112 139.5)",
+          "oklch(49.3% 0.118 139.5)",
+          "oklch(60.7% 0.110 139.5)",
+          "oklch(72.1% 0.102 139.5)",
+          "oklch(83.6% 0.094 139.5)",
+          "oklch(95.0% 0.086 139.5)"
+        ]
+      },
+      "mark-brassica": {
+        "role": "primary",
+        "displayName": "Brassica Blue Mark",
+        "canonical": "oklch(45.8% 0.094 250.6)",
+        "tonalRamp": [
+          "oklch(15.0% 0.077 250.6)",
+          "oklch(26.4% 0.083 250.6)",
+          "oklch(37.9% 0.090 250.6)",
+          "oklch(49.3% 0.092 250.6)",
+          "oklch(60.7% 0.086 250.6)",
+          "oklch(72.1% 0.079 250.6)",
+          "oklch(83.6% 0.073 250.6)",
+          "oklch(95.0% 0.066 250.6)"
+        ]
+      },
+      "mark-root": {
+        "role": "primary",
+        "displayName": "Earth Orange Mark",
+        "canonical": "oklch(50.7% 0.114 58.8)",
+        "tonalRamp": [
+          "oklch(15.0% 0.090 58.8)",
+          "oklch(26.4% 0.097 58.8)",
+          "oklch(37.9% 0.105 58.8)",
+          "oklch(49.3% 0.113 58.8)",
+          "oklch(60.7% 0.107 58.8)",
+          "oklch(72.1% 0.099 58.8)",
+          "oklch(83.6% 0.092 58.8)",
+          "oklch(95.0% 0.084 58.8)"
+        ]
+      },
+      "mark-allium": {
+        "role": "primary",
+        "displayName": "Allium Violet Mark",
+        "canonical": "oklch(48.9% 0.108 320.1)",
+        "tonalRamp": [
+          "oklch(15.0% 0.086 320.1)",
+          "oklch(26.4% 0.093 320.1)",
+          "oklch(37.9% 0.101 320.1)",
+          "oklch(49.3% 0.108 320.1)",
+          "oklch(60.7% 0.100 320.1)",
+          "oklch(72.1% 0.093 320.1)",
+          "oklch(83.6% 0.086 320.1)",
+          "oklch(95.0% 0.078 320.1)"
+        ]
+      },
+      "mark-legume": {
+        "role": "primary",
+        "displayName": "Legume Olive Mark",
+        "canonical": "oklch(49.1% 0.100 107.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.080 107.4)",
+          "oklch(26.4% 0.086 107.4)",
+          "oklch(37.9% 0.093 107.4)",
+          "oklch(49.3% 0.100 107.4)",
+          "oklch(60.7% 0.093 107.4)",
+          "oklch(72.1% 0.086 107.4)",
+          "oklch(83.6% 0.079 107.4)",
+          "oklch(95.0% 0.072 107.4)"
+        ]
+      },
+      "mark-herb": {
+        "role": "primary",
+        "displayName": "Herb Green Mark",
+        "canonical": "oklch(43.7% 0.068 156.4)",
+        "tonalRamp": [
+          "oklch(15.0% 0.056 156.4)",
+          "oklch(26.4% 0.061 156.4)",
+          "oklch(37.9% 0.066 156.4)",
+          "oklch(49.3% 0.066 156.4)",
+          "oklch(60.7% 0.061 156.4)",
+          "oklch(72.1% 0.056 156.4)",
+          "oklch(83.6% 0.052 156.4)",
+          "oklch(95.0% 0.047 156.4)"
+        ]
+      },
+      "mark-fruit": {
+        "role": "primary",
+        "displayName": "Fruit Wine Mark",
+        "canonical": "oklch(44.8% 0.145 3.7)",
+        "tonalRamp": [
+          "oklch(15.0% 0.119 3.7)",
+          "oklch(26.4% 0.129 3.7)",
+          "oklch(37.9% 0.139 3.7)",
+          "oklch(49.3% 0.141 3.7)",
+          "oklch(60.7% 0.131 3.7)",
+          "oklch(72.1% 0.121 3.7)",
+          "oklch(83.6% 0.111 3.7)",
+          "oklch(95.0% 0.101 3.7)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "The place name on the board, and only that. Archivo 118% width, uppercase, tight negative tracking."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "The board's question in the asking state, and the temperature readout. Occupies the same slot as Display."
+      },
+      "title": {
+        "displayName": "Row Title",
+        "purpose": "Stall row headings and the quiet-state heading. Uppercase, 106-108% width, over a 2px ink rule."
+      },
+      "crate-name": {
+        "displayName": "Crate Name",
+        "purpose": "The crop name inside the produce band. Condensed to 78% so long names fit the fixed band; scales up when urgent, down when out of season."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base prose and the crate's one dated sentence. Tabular numerals throughout so dates and temperatures never jitter."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Every control: buttons, month rail, family marks, row counts, fact-list terms. Uppercase, condensed, positive tracking."
+      },
+      "micro": {
+        "displayName": "Micro",
+        "purpose": "Class tags, the HOLD bar, the IN GARDEN tag, and the season bar's twelve month initials. 74-80% width, heaviest tracking in the system."
+      }
+    },
+    "shadows": [
+      {
+        "name": "none",
+        "value": "none",
+        "purpose": "The system has no light source and no elevation. Depth is material change, rule weight, and alpha washes over the crate's slat."
+      },
+      {
+        "name": "now-ring",
+        "value": "0 0 0 2px var(--ink)",
+        "purpose": "Marks the current month's cell inside a crate's season bar. Drawing, not lifting."
+      },
+      {
+        "name": "swatch-edge",
+        "value": "inset 0 0 0 1px var(--ink-2)",
+        "purpose": "Gives the legend's pale harvest swatch an edge so it survives on the limewash ground."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "The only authored easing. Carries the stall re-lay and the crate chevron."
+      },
+      {
+        "name": "relay",
+        "value": "transform .52s cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "The one authored motion moment: the stall physically re-laying itself when place, month, family, or hidden set changes. FLIP - measure, render, invert, play back once. NOTE: currently inert in the build; withRelay() selects '.crate[data-id]' but data-id sits on the crate's child buttons."
+      },
+      {
+        "name": "settle",
+        "value": "brightness(1.5) -> none over .5s",
+        "purpose": "The board flashing and settling when the grower's question is answered."
+      },
+      {
+        "name": "state",
+        "value": "background-color .12s linear, color .12s linear",
+        "purpose": "Every hover and inversion in the system. Nothing else animates."
+      },
+      {
+        "name": "disclose",
+        "value": "transform .16s cubic-bezier(.16, 1, .3, 1)",
+        "purpose": "The crate chevron rotating 180 degrees when the crate opens."
+      },
+      {
+        "name": "reduced",
+        "value": "* { animation-duration: .001ms !important; transition-duration: .001ms !important; }",
+        "purpose": "Under prefers-reduced-motion: reduce, everything is flattened and the re-lay is skipped before it measures."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "46rem",
+        "purpose": "The system's only breakpoint. Rail goes 12 to 6 columns, crates to a fixed 2-up, marks become a masked scroller, weather leaves the flow."
+      }
+    ],
+    "materials": [
+      {
+        "name": "limewash",
+        "value": "var(--ground)",
+        "purpose": "The page itself. The mineral wall the stall stands against."
+      },
+      {
+        "name": "slate",
+        "value": "var(--slate) + 5% fractal-noise SVG tile",
+        "purpose": "The painted board and the basket rail. The only two dark planes."
+      },
+      {
+        "name": "slat",
+        "value": "236x140 inline SVG tile: kraft base, 5.5% fractal-noise grain, four dark seams and two light highlights at irregular intervals",
+        "purpose": "The crate's board. The only texture besides the board's noise; baked as a data URI with no network cost."
+      },
+      {
+        "name": "washes",
+        "value": "rgba(chalk,.2) label / rgba(chalk,.45) opened / rgba(ink,.05) foot / rgba(ink,.1) foot-hover / rgba(chalk,.14) closed-label",
+        "purpose": "The crate's interior zones are translucent films over the slat, never solid fills. The grain stays visible, which is why the crate never flattens into a card."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button (solid)",
+      "kind": "button",
+      "refersTo": "button-solid",
+      "description": "The single primary action inside the slate board. Its hover is the only place a produce colour fills a control.",
+      "html": "<button class=\"ds-btn ds-btn-solid\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 21s7-5.7 7-11a7 7 0 1 0-14 0c0 5.3 7 11 7 11Z\"/><path d=\"M12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z\"/></svg>Use my location</button>",
+      "css": ".ds-btn { font-family: Archivo, system-ui, sans-serif; font-stretch: 92%; font-weight: 600; font-size: .875rem; letter-spacing: .04em; text-transform: uppercase; border: 2px solid var(--chalk, #EEF1E7); border-radius: 2px; background: transparent; color: var(--chalk, #EEF1E7); padding: .7rem 1.1rem; cursor: pointer; display: inline-flex; align-items: center; gap: .5rem; transition: background-color .12s linear, color .12s linear; } .ds-btn svg { width: 18px; height: 18px; } .ds-btn:hover { background: var(--chalk, #EEF1E7); color: var(--slate, #1E231C); } .ds-btn:focus-visible { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: 2px; } .ds-btn-solid { background: var(--chalk, #EEF1E7); color: var(--slate, #1E231C); } .ds-btn-solid:hover { background: var(--f-fruiting, #C4302B); border-color: var(--f-fruiting, #C4302B); color: var(--chalk, #EEF1E7); } .ds-btn:disabled { opacity: .5; cursor: not-allowed; }"
+    },
+    {
+      "name": "Ghost Button on Ground",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "The on-limewash twin of the board's ghost button. Used in the quiet state and the off-stall row; inverts to a full ink plane on hover.",
+      "html": "<button class=\"ds-btn-dark\">Show all crops</button>",
+      "css": ".ds-btn-dark { font-family: Archivo, system-ui, sans-serif; font-stretch: 92%; font-weight: 600; font-size: .875rem; letter-spacing: .04em; text-transform: uppercase; border: 2px solid var(--ink, #171A16); border-radius: 2px; background: transparent; color: var(--ink, #171A16); padding: .7rem 1.1rem; cursor: pointer; display: inline-flex; align-items: center; gap: .5rem; transition: background-color .12s linear, color .12s linear; } .ds-btn-dark:hover { background: var(--ink, #171A16); color: var(--ground, #E4E7DE); } .ds-btn-dark:focus-visible { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "Inset into the slate board. Focus shifts the border to chalk rather than drawing a ring, because the field already sits inside a focus-bearing form.",
+      "html": "<input class=\"ds-field\" type=\"text\" placeholder=\"or type a town — Porto, Sevilla, Palermo\" aria-label=\"Search for a town\">",
+      "css": ".ds-field { font-family: Archivo, system-ui, sans-serif; font-stretch: 92%; font-size: .9375rem; background: var(--slate-2, #2B322A); color: var(--chalk, #EEF1E7); border: 2px solid #58614F; border-radius: 2px; padding: .7rem .85rem; min-width: 18rem; } .ds-field::placeholder { color: #9AA394; } .ds-field:focus { border-color: var(--chalk, #EEF1E7); outline: none; }"
+    },
+    {
+      "name": "Family Mark (filter chip)",
+      "kind": "chip",
+      "refersTo": "mark",
+      "description": "A crop-family filter carrying a hard 9x9 square of that family's mark colour. Selected inverts to a full ink plane while the square keeps its family hue, so the filter identifies itself two ways.",
+      "html": "<button class=\"ds-mark\" style=\"--chip: var(--m-brassica, #2A5A8A)\" aria-pressed=\"false\"><span class=\"ds-mark-chip\"></span>Brassicas</button> <button class=\"ds-mark\" style=\"--chip: var(--m-leaf, #366E27)\" aria-pressed=\"true\"><span class=\"ds-mark-chip\"></span>Leaves</button>",
+      "css": ".ds-mark { font-family: Archivo, system-ui, sans-serif; font-size: .75rem; font-stretch: 84%; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; background: transparent; color: var(--ink-2, #525A4E); border: 1px solid var(--kraft-edge, #A79C81); border-radius: 2px; padding: .35rem .6rem; cursor: pointer; display: inline-flex; align-items: center; gap: .4rem; } .ds-mark-chip { width: 9px; height: 9px; flex: 0 0 auto; background: var(--chip); } .ds-mark:hover { color: var(--ink, #171A16); border-color: var(--ink-2, #525A4E); } .ds-mark[aria-pressed=\"true\"] { background: var(--ink, #171A16); color: var(--ground, #E4E7DE); border-color: var(--ink, #171A16); } .ds-mark:focus-visible { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: 2px; }"
+    },
+    {
+      "name": "Month Rail",
+      "kind": "nav",
+      "refersTo": "rail-month",
+      "description": "The only navigation in the product: twelve equal grid cells over the deep-limewash plane. The selected cell takes a 3px fruiting-red top border and the ground colour, so it appears to punch through the rail into the page. Today carries a separate 4x4 square, suppressed when it is also selected.",
+      "html": "<nav class=\"ds-rail\" aria-label=\"Month\"><div class=\"ds-rail-inner\"><button class=\"ds-rail-month\" aria-pressed=\"false\">Jun</button><button class=\"ds-rail-month\" aria-pressed=\"false\">Jul</button><button class=\"ds-rail-month\" aria-pressed=\"true\" data-today=\"true\">Aug</button><button class=\"ds-rail-month\" aria-pressed=\"false\">Sep</button><button class=\"ds-rail-month\" aria-pressed=\"false\">Oct</button><button class=\"ds-rail-month\" aria-pressed=\"false\">Nov</button></div></nav>",
+      "css": ".ds-rail { background: var(--ground-deep, #D7DBD0); border-bottom: 1px solid var(--kraft-edge, #A79C81); padding: 0 1rem; } .ds-rail-inner { display: grid; grid-template-columns: repeat(6, 1fr); } .ds-rail-month { font-family: Archivo, system-ui, sans-serif; font-size: .75rem; font-stretch: 80%; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: transparent; border: 0; border-top: 3px solid transparent; color: var(--ink-2, #525A4E); padding: .6rem .1rem .55rem; cursor: pointer; position: relative; } .ds-rail-month:hover { color: var(--ink, #171A16); background: rgba(23,26,22,.05); } .ds-rail-month[aria-pressed=\"true\"] { color: var(--ink, #171A16); border-top-color: var(--f-fruiting, #C4302B); background: var(--ground, #E4E7DE); font-weight: 700; } .ds-rail-month[data-today=\"true\"]::after { content: ''; position: absolute; left: 50%; bottom: 3px; width: 4px; height: 4px; margin-left: -2px; background: var(--ink-2, #525A4E); } .ds-rail-month[data-today=\"true\"][aria-pressed=\"true\"]::after { display: none; } .ds-rail-month:focus-visible { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: -3px; }"
+    },
+    {
+      "name": "Crate",
+      "kind": "custom",
+      "refersTo": "crate",
+      "description": "The signature component. An <article> holding two independent buttons (take / open) because a button cannot nest in a button; focus on either lights the whole crate via :focus-within. Held rigid by fixed field heights — uniform produce band, uniform bar, uniform foot, absolute min-height on the dated line — not by equal card heights, which is what lets one crate open without stretching its row.",
+      "html": "<article class=\"ds-crate\" style=\"--field: var(--f-brassica, #2A5A8A); --mark: var(--m-brassica, #2A5A8A)\"><button class=\"ds-crate-take\" aria-pressed=\"false\" aria-label=\"Add Cabbage to your garden. Sow now — window closes 31 Aug\"><span class=\"ds-crate-produce\"><span class=\"ds-crate-class\">annual</span><span class=\"ds-crate-name\">Cabbage<span class=\"ds-crate-pt\">repolho</span></span></span><span class=\"ds-crate-label\"><span class=\"ds-bar\" aria-hidden=\"true\"><span class=\"ds-bar-cell\"></span><span class=\"ds-bar-cell\" data-b=\"sow\"></span><span class=\"ds-bar-cell\" data-b=\"sow\"></span><span class=\"ds-bar-cell\" data-b=\"harvest\"></span><span class=\"ds-bar-cell\"></span><span class=\"ds-bar-cell\" data-b=\"sow\"></span><span class=\"ds-bar-cell\" data-b=\"both\"></span><span class=\"ds-bar-cell\" data-b=\"sow\" data-now=\"true\"></span><span class=\"ds-bar-cell\"></span><span class=\"ds-bar-cell\" data-b=\"harvest\"></span><span class=\"ds-bar-cell\" data-b=\"harvest\"></span><span class=\"ds-bar-cell\"></span></span><span class=\"ds-crate-line\">Sow now — window closes 31 Aug</span></span></button><button class=\"ds-crate-more\" aria-expanded=\"false\"><span class=\"ds-ease\"><span class=\"ds-pip ds-pip-on\"></span><span class=\"ds-pip ds-pip-on\"></span><span class=\"ds-pip\"></span> moderate</span><span class=\"ds-crate-span\">90–120 days</span><svg class=\"ds-chev\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 9.5 12 15.5 18 9.5\"/></svg></button></article>",
+      "css": ".ds-crate { position: relative; display: flex; flex-direction: column; width: 17rem; font-family: Archivo, system-ui, sans-serif; color: var(--ink, #171A16); background: var(--slat, #CEC6B2) repeat; background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='236' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.02 0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='236' height='140' fill='%23CEC6B2'/%3E%3Crect width='236' height='140' filter='url(%23g)' opacity='0.055'/%3E%3Cg fill='%23B5AB92'%3E%3Crect x='41' width='2' height='140'/%3E%3Crect x='103' width='1' height='140'/%3E%3Crect x='149' width='2' height='140'/%3E%3Crect x='210' width='1' height='140'/%3E%3C/g%3E%3Cg fill='%23D6CFBD'%3E%3Crect x='43' width='1' height='140'/%3E%3Crect x='151' width='1' height='140'/%3E%3C/g%3E%3C/svg%3E\"); border: 1px solid var(--kraft-edge, #A79C81); border-bottom: 3px solid var(--kraft-edge, #A79C81); overflow: hidden; transition: border-color .12s linear; } .ds-crate:hover { border-color: var(--ink, #171A16); } .ds-crate:focus-within { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: 2px; } .ds-crate-take { font: inherit; color: inherit; text-align: left; background: none; border: 0; padding: 0; margin: 0; cursor: pointer; display: block; width: 100%; } .ds-crate-take:focus-visible { outline: none; } .ds-crate-produce { position: relative; background: var(--field); color: var(--chalk, #EEF1E7); padding: .7rem .85rem .6rem; min-height: 5.35rem; display: flex; flex-direction: column; justify-content: flex-end; } .ds-crate-class { position: absolute; top: .55rem; right: .7rem; font-size: .625rem; font-stretch: 80%; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; } .ds-crate-name { margin: 0; font-size: 1.1875rem; font-stretch: 78%; font-weight: 700; line-height: 1.02; letter-spacing: .005em; text-transform: uppercase; } .ds-crate-pt { font-size: .75rem; font-stretch: 88%; font-weight: 400; display: block; margin-top: .15rem; } .ds-crate-label { display: block; padding: .7rem .85rem .55rem; background: rgba(238,241,231,.2); } .ds-bar { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1px; margin-bottom: .5rem; } .ds-bar-cell { height: 17px; background: #C9CFC2; } .ds-bar-cell[data-b=\"sow\"] { background: var(--field); } .ds-bar-cell[data-b=\"harvest\"] { background: color-mix(in srgb, var(--field) 34%, #E7EADF); } .ds-bar-cell[data-b=\"both\"] { background: linear-gradient(180deg, var(--field) 0 55%, color-mix(in srgb, var(--field) 34%, #E7EADF) 55% 100%); } .ds-bar-cell[data-now=\"true\"] { box-shadow: 0 0 0 2px var(--ink, #171A16); position: relative; z-index: 1; } .ds-crate-line { display: block; font-size: .875rem; font-stretch: 92%; line-height: 1.35; min-height: 2.7rem; } .ds-crate-more { display: flex; align-items: center; justify-content: space-between; gap: .5rem; width: 100%; font: inherit; font-size: .75rem; font-stretch: 88%; letter-spacing: .03em; text-transform: uppercase; background: rgba(23,26,22,.05); border: 0; border-top: 1px solid var(--kraft-edge, #A79C81); color: var(--ink-3, #3E453B); padding: .5rem .85rem; cursor: pointer; text-align: left; } .ds-crate-more:hover { background: rgba(23,26,22,.1); color: var(--ink, #171A16); } .ds-crate-more[aria-expanded=\"true\"] { background: var(--ink, #171A16); color: var(--ground, #E4E7DE); } .ds-crate-more[aria-expanded=\"true\"] .ds-chev { transform: rotate(180deg); } .ds-ease { display: inline-flex; gap: 3px; align-items: center; } .ds-pip { width: 7px; height: 7px; border: 1px solid var(--ink-3, #3E453B); border-radius: 50%; } .ds-pip-on { background: var(--ink-3, #3E453B); } .ds-crate-span { margin-left: auto; white-space: nowrap; } .ds-chev { width: 15px; height: 15px; flex: 0 0 auto; transition: transform .16s cubic-bezier(.16,1,.3,1); }"
+    },
+    {
+      "name": "Crate — held by live conditions",
+      "kind": "custom",
+      "refersTo": "crate",
+      "description": "Live weather overruling the calendar. Three channels at once: an ink border on all four sides, a printed HOLD bar across the bottom of the produce band, and a 600-weight sentence naming the forecast temperature. Never colour alone.",
+      "html": "<article class=\"ds-crate ds-crate-held\" style=\"--field: var(--f-fruiting, #C4302B)\"><span class=\"ds-crate-produce\"><span class=\"ds-crate-class\">annual</span><span class=\"ds-crate-name\">Cucumber<span class=\"ds-crate-pt\">pepino</span></span></span><span class=\"ds-crate-label\"><span class=\"ds-crate-line\">Window open, but 1°C forecast this week — hold</span></span></article>",
+      "css": ".ds-crate-held { border-color: var(--ink, #171A16); border-bottom-color: var(--ink, #171A16); } .ds-crate-held .ds-crate-produce { padding-bottom: 1.4rem; } .ds-crate-held .ds-crate-produce::after { content: 'hold'; position: absolute; left: 0; right: 0; bottom: 0; background: var(--ink, #171A16); color: var(--ground, #E4E7DE); font-size: .625rem; font-stretch: 80%; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: .12rem .85rem; } .ds-crate-held .ds-crate-line { font-weight: 600; }"
+    },
+    {
+      "name": "Basket Chip",
+      "kind": "chip",
+      "refersTo": "basket-chip",
+      "description": "A picked crop in the fixed bottom rail, filled with its family's field colour. It is a remove control and says so with a close icon; hovering inverts it to chalk-on-slate.",
+      "html": "<button class=\"ds-basket-chip\" style=\"--chip: var(--f-fruiting, #C4302B)\" aria-label=\"Remove Tomato from your garden\">Tomato<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 6l12 12\"/><path d=\"M18 6 6 18\"/></svg></button>",
+      "css": ".ds-basket-chip { font-family: Archivo, system-ui, sans-serif; font-size: .75rem; font-stretch: 84%; font-weight: 600; background: var(--chip, #2B322A); color: var(--chalk, #EEF1E7); border: 0; border-radius: 2px; padding: .25rem .45rem; cursor: pointer; display: inline-flex; align-items: center; gap: .3rem; } .ds-basket-chip svg { width: 11px; height: 11px; } .ds-basket-chip:hover { background: var(--chalk, #EEF1E7); color: var(--slate, #1E231C); } .ds-basket-chip:focus-visible { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: 2px; }"
+    },
+    {
+      "name": "Alert Strip",
+      "kind": "custom",
+      "refersTo": "alert",
+      "description": "The single warning surface: caution amber with slate type, squared, capped at 62ch, sitting inside the slate board. At most one per screen.",
+      "html": "<p class=\"ds-alert\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 3v18\"/><path d=\"M4.2 7.5l15.6 9\"/><path d=\"M19.8 7.5l-15.6 9\"/><path d=\"M9 5l3 2 3-2\"/><path d=\"M9 19l3-2 3 2\"/></svg>Frost forecast this week: 1°C. Anything tender is held back below.</p>",
+      "css": ".ds-alert { display: flex; align-items: center; gap: .5rem; margin: 0; padding: .4rem .6rem; background: #E8C46A; color: #1E231C; font-family: Archivo, system-ui, sans-serif; font-size: .8125rem; font-stretch: 92%; font-weight: 600; letter-spacing: .01em; max-width: 62ch; } .ds-alert svg { width: 18px; height: 18px; flex: 0 0 auto; }"
+    },
+    {
+      "name": "Quiet Panel",
+      "kind": "card",
+      "refersTo": null,
+      "description": "The designed empty state. An empty front row is a real answer here, not a failure: it gets the reason in the grower's own terms, the next real date, and the way to it. 2px ink border on deep limewash, 2px chamfer, no shadow.",
+      "html": "<div class=\"ds-quiet\"><h3 class=\"ds-quiet-head\">Nothing to start in August</h3><p class=\"ds-quiet-text\">High summer. The ground is too hot for almost anything to germinate, and what does germinate bolts. This is a month for watering and harvesting, not for starting.</p><div class=\"ds-quiet-next\"><span class=\"ds-quiet-label\">Next window</span><span class=\"ds-quiet-crop\">Chilli</span><span>Next window opens 1 Jan</span><button class=\"ds-btn-dark\">Go to that month</button></div></div>",
+      "css": ".ds-quiet { font-family: Archivo, system-ui, sans-serif; border: 2px solid var(--ink, #171A16); border-radius: 2px; background: var(--ground-deep, #D7DBD0); padding: 2rem; display: grid; gap: 1rem; color: var(--ink, #171A16); } .ds-quiet-head { margin: 0; font-size: 1.75rem; font-stretch: 106%; font-weight: 700; text-transform: uppercase; letter-spacing: -.01em; line-height: 1.08; } .ds-quiet-text { margin: 0; max-width: 68ch; font-size: .9375rem; font-stretch: 96%; color: var(--ink-2, #525A4E); } .ds-quiet-next { display: flex; flex-wrap: wrap; gap: .75rem 1.5rem; align-items: center; padding-top: .25rem; border-top: 1px solid var(--kraft-edge, #A79C81); } .ds-quiet-label { font-size: .75rem; font-stretch: 86%; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2, #525A4E); } .ds-quiet-crop { font-size: 1.0625rem; font-stretch: 96%; font-weight: 700; }"
+    },
+    {
+      "name": "Off-Stall Item (reversal row)",
+      "kind": "custom",
+      "refersTo": null,
+      "description": "Where a dropped crop lands. Slat-backed, family-squared, with a hairline-divided 'put back' control. Every removal in this system lands somewhere visible and is reversible from the row it lands in.",
+      "html": "<span class=\"ds-offstall\" style=\"--field: var(--f-allium, #7B4A86)\"><span class=\"ds-offstall-name\">Garlic</span><button class=\"ds-offstall-back\" aria-label=\"Put Garlic back on the stall\">put back</button></span>",
+      "css": ".ds-offstall { display: inline-flex; align-items: stretch; font-family: Archivo, system-ui, sans-serif; color: var(--ink, #171A16); border: 1px solid var(--kraft-edge, #A79C81); background: #CEC6B2; } .ds-offstall-name { display: flex; align-items: center; gap: .45rem; padding: .35rem .6rem; font-size: .8125rem; font-stretch: 92%; font-weight: 600; } .ds-offstall-name::before { content: ''; width: 9px; height: 9px; background: var(--field); flex: 0 0 auto; } .ds-offstall-back { font-family: inherit; font-size: .6875rem; font-stretch: 86%; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; background: transparent; color: var(--ink-3, #3E453B); border: 0; border-left: 1px solid var(--kraft-edge, #A79C81); padding: .35rem .55rem; cursor: pointer; } .ds-offstall-back:hover { background: var(--ink, #171A16); color: var(--ground, #E4E7DE); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Banca",
+    "overview": "The Banca — the Iberian mercado stall. A limewashed wall, a painted slate board chalked with today's answer, and kraft crates of produce set out on it. What is on the stall is what is in season; nothing else is on the stall.\n\nThe world is made of four materials and nothing else: limewash (the pale mineral ground the whole page sits on), slate (the near-black painted board and the basket rail, the only two dark planes), kraft (the slatted crate board, a tiled SVG with real slat seams and a faint turbulence grain), and produce (eight saturated field colours that are the only chromatic surfaces in the system). Every one of those is a physical thing a market stall is actually built from, which is why the surface can be loud without being decorative — the colour is stock, not branding.\n\nDensity is high and deliberately so. This is a product read outdoors, in sun, on a phone, mid-task — so the type is set tight, the contrast is measured rather than eyeballed, and information is packed into rigid grids rather than spaced into calm. There is no soft card, no drop shadow, no gradient except the one that splits a season-bar cell in half, and no rounded corner larger than 2px. Depth is done with rule weight and material change, never with light. Motion is authored at exactly one moment and nowhere else.\n\nWhat this world explicitly refuses: the sage-green, soft-cornered, three-step wellness wizard the gardening category ships. There is no setup route in front of the product — the asking state is the same board, with no place written on it yet, and the crates are already laid out behind it.",
+    "keyCharacteristics": [
+      "Four materials only: limewash ground, slate board, kraft crate, produce colour.",
+      "One superfamily (Archivo variable) doing display, body, and label work across a 62–125% width axis.",
+      "Eight crop-family colours that are data, not decoration — each with two solved roles.",
+      "Squared containers, 2px chamfer on controls, 1px hairlines with 2–3px structural rules.",
+      "Zero elevation shadows. The system has no light source.",
+      "Every colour pairing in the palette measured to 4.5:1 or better, including the blended ones."
+    ],
+    "rules": [
+      {
+        "name": "The Two-Role Produce Rule",
+        "body": "Every crop-family hue exists twice — --f-* for a filled plane that takes chalk type, --m-* for the same hue standing on the limewash ground. Choose by what the colour is sitting on, never by preference. A field colour used as a rule on the ground, or a mark colour used as a plane, breaks the measurement.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Hue-Alone Rule",
+        "body": "No state in this system is carried by colour alone, anywhere. Out of season is zinc and a smaller crate name and a lighter bottom border and the sentence 'Next window opens 15 Jan'. A held crop is ink-bordered and carries a printed HOLD bar across the bottom of its produce band and says why. In your garden is a 2px ink border and a check-marked IN GARDEN tag. Add the redundant signal before you reach for the hue.",
+        "section": "colors"
+      },
+      {
+        "name": "The Measured 4.5 Rule",
+        "body": "Every foreground/background pair in this palette was solved to at least 4.5:1 by measurement, including composited grounds. A new colour joins the system by being measured against the exact surface it will land on — including any alpha wash over it — not by looking dark enough.",
+        "section": "colors"
+      },
+      {
+        "name": "The Colour-Is-Stock Rule",
+        "body": "Chromatic colour in this system means produce. Never use a produce hue for a UI affordance that isn't a crop: buttons, rails, and filters are neutral until a crop family gives them a hue. The one exception is the fruiting red, which serves as the system's single accent for focus rings, carets, selection, the active-month tick, and the solid button's hover.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Superfamily Rule",
+        "body": "Archivo is the only face. There is no serif, no mono, no icon font, and no system display fallback in the design — only in the loading fallback. A second family is not an escape hatch; reach for the width axis instead.",
+        "section": "typography"
+      },
+      {
+        "name": "The Width-Tracks-Role Rule",
+        "body": "Width is a semantic axis, not a fitting tool. Display and headline type is expanded (104–118%) because it is signage; body sits near normal (92–96%); controls and micro-labels are condensed (74–88%) because they are stencilled. The one principled inversion is the crate name at 78% — it is signage, but it lives in a fixed-width band, and the band wins.",
+        "section": "typography"
+      },
+      {
+        "name": "The Tight-Uppercase Rule",
+        "body": "Uppercase display type always carries negative tracking (−0.01em to −0.03em); uppercase label type always carries positive tracking (+0.04em to +0.16em). Large caps need closing up, small caps need opening out. Never ship uppercase at default tracking.",
+        "section": "typography"
+      },
+      {
+        "name": "The Sticky Claim Rule",
+        "body": "The board and the month rail never leave the screen. They are the product's claim (this place, this month) and everything below them is an answer to them. A new screen inherits both, or it is not part of this product.",
+        "section": "layout"
+      },
+      {
+        "name": "The One-Measure Rule",
+        "body": "Every band aligns to the same 92rem measure and the same gutter, even when its background is full-bleed. Do not introduce a second content width.",
+        "section": "layout"
+      },
+      {
+        "name": "The No-Light Rule",
+        "body": "No box-shadow for depth, ever — no ambient shadow, no offset shadow, no glow, no filter: drop-shadow. If something must come forward, change its material, thicken its rule, or invert it to an ink plane.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Ink-Inversion Rule",
+        "body": "The system's pressed / active / open treatment is a full inversion to an ink plane with ground-coloured type — the selected family mark, the opened crate's foot bar, the hover state of every drop and put-back control. It is the only promotion the system has, and it is binary. There is no half-step.",
+        "section": "elevation"
+      },
+      {
+        "name": "The 2px Chamfer Rule",
+        "body": "0 for anything that holds content, 2px for anything you press or type into. There is no third radius.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Fixed Field Rule",
+        "body": "The crate grid is held by fixed field heights, not by equal card heights: a uniform produce band min-height, a uniform bar height, a uniform foot bar, and an absolute min-height on the dated sentence. That, plus align-items: start on the grid, is what lets a single crate open in place without stretching its row. Never reach for equal-height rows or a stretch alignment to tidy a grid — pin the fields instead.",
+        "section": "components"
+      },
+      {
+        "name": "The Two-Button Crate Rule",
+        "body": "Take and open are separate controls with separate aria semantics (aria-pressed on take, aria-expanded on open). A composite object that has two actions is a container with two buttons, never one button that guesses at intent.",
+        "section": "components"
+      },
+      {
+        "name": "The One-Moment Rule",
+        "body": "The stall re-laying itself is the only authored motion in the product. Everything else is a state change under 0.16s. No entrance animations, no staggered reveals, no scroll-triggered anything.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "Do pick the produce role by what the colour sits on: --f-* for a filled plane taking chalk type, --m-* for the hue standing on the limewash ground.",
+      "Do measure any new colour against the exact composited surface it will land on, alpha washes included — that is why --ink-3 exists at 5.3:1 where --ink-2 would have shipped at 3.83:1.",
+      "Do give every state at least two channels: colour plus wording, plus position or a printed mark.",
+      "Do set new type on the Archivo width axis — expanded (104–118%) for signage, ~92–96% for prose, condensed (74–88%) for controls and micro-labels.",
+      "Do close up uppercase display type (negative tracking) and open out uppercase label type (positive tracking).",
+      "Do hold grids with fixed field heights and align-items: start, so one item can expand without disturbing its neighbours.",
+      "Do join any new sticky band to the measured --board-h chain rather than hard-coding an offset.",
+      "Do land every destructive action somewhere visible and reversible from the row it lands in.",
+      "Do draw new icons on the 24x24 grid at 1.75 stroke with round caps, in the same authored set.",
+      "Do state uncertainty in the interface — the medium-confidence caveat, the out-of-area note, the 'working from the calendar alone' line, and the storage disclosure are design elements, not disclaimers to be tucked away."
+    ],
+    "donts": [
+      "Don't use a box-shadow for depth. The system has no light source; change the material, thicken the rule, or invert to an ink plane instead.",
+      "Don't exceed a 2px radius, and don't put a radius on anything that holds content.",
+      "Don't introduce a second typeface, an icon font, or an emoji. The width axis replaces the second family.",
+      "Don't let a produce hue decorate a control that isn't a crop; the fruiting-red accent on focus, caret, selection, active month and the solid button's hover is the whole chromatic UI budget.",
+      "Don't use --zinc for anything that is in season — it means 'drained', and only that.",
+      "Don't put setup, or any prerequisite, on a route in front of the stall. A missing input is a state of the board, not a door.",
+      "Don't nest an interactive control inside another interactive control; make the container an <article> and give each action its own button and its own aria state.",
+      "Don't solve a ragged grid with equal-height rows or stretch alignment.",
+      "Don't animate anything other than the re-lay for longer than 0.16s, and don't add entrance or scroll-triggered motion.",
+      "Don't show an empty result as a failure. An empty front row gets a designed panel with the reason in the grower's terms, the next real date, and the way to it."
+    ],
+    "notCanonized": [
+      "--kraft (#CEC6B2) and --kraft-2 (#C2B9A2) are declared in :root and never referenced. #CEC6B2 is the slat tile's base fill but is written literally inside the SVG data URI, so the token has no live binding; #C2B9A2 is unused entirely. Not recorded as system tokens — wire them up or delete them.",
+      "Three reused literals are not tokenized: #E8C46A (caution amber, 2 uses), #E7EADF (the colour-mix partner behind every harvest tint, 3 uses), #58614F (the on-slate field border, 2 uses). Only the amber is promoted to a frontmatter token, because only it is a recurring system role.",
+      "The FLIP re-lay in withRelay() never runs: it selects '.crate[data-id]' but the rendered crate is <article class=\"crate\"> with data-id on its two child buttons, so nothing matches and .is-relaying is never applied. Documented as the system's intended and only motion moment, not as observed behaviour.",
+      "The direction contract says '1px rules' and 'squared corners'. The build uses 1px as the hairline default but 2px and 3px as deliberate structural weights, and a 2px chamfer on every control. The build is recorded; the contract's phrasing was the ambition, not the measurement."
+    ]
+  }
+}

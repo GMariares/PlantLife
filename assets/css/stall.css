@@ -27,13 +27,16 @@
   --slate-2: #2B322A;
   --chalk: #EEF1E7;
   --chalk-dim: #AFB8A9;
-  --kraft: #CEC6B2;
-  --kraft-2: #C2B9A2;
+  /* The crate board's base and grain live inside --slat-tile's SVG, which
+     cannot read custom properties; only the edge is needed as a token. */
   --kraft-edge: #A79C81;
   --zinc: #98A093;
   --ink: #171A16;
   --ink-2: #525A4E;
   --ink-3: #3E453B;   /* clears 4.5:1 on the crate foot bar's blended ground */
+  --caution: #E8C46A;
+  --slate-rule: #4A5247;   /* divider drawn on the board */
+  --slate-edge: #58614F;   /* control borders on the board */
 
   /* Produce colour carries crop family. `field` takes chalk text; `mark` is the
      same hue solved dark enough to be read on the ground. Both cleared 4.5:1. */
@@ -120,7 +123,7 @@ body {
 .board__weather {
   display: flex; align-items: center; gap: .7rem;
   flex: 0 0 auto;
-  border-left: 1px solid #4A5247; padding-left: clamp(1rem, 3vw, 2rem);
+  border-left: 1px solid var(--slate-rule); padding-left: clamp(1rem, 3vw, 2rem);
 }
 .board__temp {
   font-size: clamp(1.75rem, 4vw, 2.75rem); font-stretch: 105%; font-weight: 700;
@@ -159,7 +162,7 @@ body {
   font: inherit; font-stretch: 92%; font-size: .9375rem;
   flex: 1 1 auto; min-width: 0;
   background: var(--slate-2); color: var(--chalk);
-  border: 2px solid #58614F; border-radius: 2px;
+  border: 2px solid var(--slate-edge); border-radius: 2px;
   padding: .7rem .85rem;
 }
 .field::placeholder { color: #9AA394; }
@@ -169,15 +172,15 @@ body {
 .suggest button {
   font: inherit; font-size: .8125rem; font-stretch: 88%;
   background: var(--slate-2); color: var(--chalk);
-  border: 1px solid #58614F; border-radius: 2px; padding: .4rem .65rem; cursor: pointer;
+  border: 1px solid var(--slate-edge); border-radius: 2px; padding: .4rem .65rem; cursor: pointer;
 }
 .suggest button:hover { background: var(--chalk); color: var(--slate); }
 .note { margin: .6rem 0 0; font-size: .75rem; font-stretch: 88%; color: var(--chalk-dim); max-width: 66ch; }
-.note--warn { color: #E8C46A; }
+.note--warn { color: var(--caution); }
 .alert {
   display: flex; align-items: center; gap: .5rem;
   margin: .6rem 0 0; padding: .4rem .6rem;
-  background: #E8C46A; color: #1E231C;
+  background: var(--caution); color: var(--slate);
   font-size: .8125rem; font-stretch: 92%; font-weight: 600;
   letter-spacing: .01em; max-width: 62ch;
 }
@@ -509,7 +512,7 @@ body {
     -webkit-overflow-scrolling: touch;
   }
   .marks::-webkit-scrollbar { display: none; }
-  .marks { mask-image: linear-gradient(90deg, #000 0, #000 calc(100% - 2rem), transparent 100%); }
+  .marks { mask-image: linear-gradient(90deg, var(--ink) 0, var(--ink) calc(100% - 2rem), transparent 100%); }
   .mark { flex: 0 0 auto; }
   .row { margin-top: 1.5rem; }
   .row__head { margin-bottom: .8rem; }
