@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PlantLife — what to sow, where you are</title>
+<meta name="description" content="A stall of food crops for your latitude and this week. Sowing, planting and harvest dates computed from your real frost dates and today's weather.">
+<meta name="theme-color" content="#1E231C">
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="assets/css/stall.css">
+</head>
+<body>
+<!--
+  DIRECTION CONTRACT — PlantLife first run
+
+  THESIS: What is on the stall is what is in season. This surface refuses the
+  sage-green three-step wellness wizard the category ships; setup is a state of
+  the stall, never a route in front of it.
+
+  OWN-WORLD: Limewash ground #E4E7DE; slate board chalked in #EEF1E7; kraft
+  slatted crates; eight produce colours carrying crop family as data, each
+  solved to 4.5:1. Archivo across 62-125% width, one superfamily. Squared
+  corners, 1px rules, no soft cards.
+
+  STORY: The grower answers one question - where - and the whole stall re-lays
+  to their latitude. They pick crates and leave with one dated action.
+
+  FIRST VIEWPORT: Sticky chalked slate board asking "Where are you growing?",
+  full width, primary action inside it. Month rail directly beneath, family
+  marks, then the crates. Basket rail fixed at the bottom.
+
+  FORM: Banca - the Iberian mercado stall. Candidate 5 of 7 grounded
+  directions; seed key e37357e1, scope direction, mode operate.
+
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the
+  finish review, the verdict, DESIGN.md, and every shipping raster carrying its
+  provenance
+-->
+<header class="board" id="board"></header>
+<nav class="rail" id="rail" aria-label="Month"></nav>
+<div class="marks" id="marks" role="group" aria-label="Crop family"></div>
+<main class="stall" id="stall"></main>
+<aside class="basket" id="basket" aria-label="Your garden"></aside>
+
+<noscript>
+  <div class="stall" style="padding-top:2rem">
+    <h2 class="row__title">PlantLife needs JavaScript</h2>
+    <p class="quiet__text">Every date here is computed in your browser from your frost dates and
+    today's weather, so there is nothing meaningful to show without it.</p>
+  </div>
+</noscript>
+
+<script src="assets/js/data/regions.js"></script>
+<script src="assets/js/data/crops.js"></script>
+<script src="assets/js/season.js"></script>
+<script src="assets/js/stall.js"></script>
+</body>
+</html>

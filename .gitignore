@@ -1,0 +1,6 @@
+# Local tooling only — the app itself has no build step and no dependencies.
+node_modules/
+package-lock.json
+
+# Build-time review evidence: screenshots are regenerated, not tracked.
+.impeccable/review/

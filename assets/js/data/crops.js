@@ -1,0 +1,305 @@
+/* PlantLife — crop timing, Iberian & Mediterranean.
+ *
+ * PROVENANCE AND ITS LIMITS. Every window below is the conventional sowing,
+ * planting and harvest calendar for this crop in an Iberian / Mediterranean
+ * climate — mild wet winters, hot dry summers — as practised in Portuguese and
+ * Spanish kitchen gardens. They are not measurements and not a regional trial
+ * result. Two things follow, and the interface states both rather than hiding them:
+ *
+ *   1. Windows for FROST-TENDER crops are clamped at runtime by the region's last
+ *      frost date, so the same crop opens weeks apart in Faro and in Bragança.
+ *      The calendar here is the pattern; the frost date makes it local.
+ *   2. `confidence: 'medium'` marks crops where real practice varies by more than
+ *      a few weeks across this region — usually because the crop is sensitive to
+ *      altitude, summer heat, or soil type. The interface shows that uncertainty
+ *      instead of presenting every date with the same false precision.
+ *
+ * Nothing here is invented to fill a gap. A crop whose timing could not be stated
+ * with confidence was left out of the set rather than guessed at.
+ *
+ * Two timing models, confirmed in design review:
+ *   kind: 'annual'    — sowing window + days to maturity (`dtm`).
+ *   kind: 'perennial' — PLANTING window + years to first real harvest (`years`).
+ * They share one label grid but compute urgency differently: an annual's window
+ * closes in days, a perennial's in a season.
+ *
+ * Dates are 'MM-DD'. A window whose end is earlier than its start wraps the year
+ * (e.g. broad beans, '10-01' to '12-31', and peas through February).
+ */
+(function (global) {
+  'use strict';
+
+  var FAMILIES = {
+    fruiting: { name: 'Fruiting',   note: 'Warmth-driven. Nothing goes out before the last frost.' },
+    leaf:     { name: 'Leaves',     note: 'Cool-season. Most bolt and turn bitter in real heat.' },
+    brassica: { name: 'Brassicas',  note: 'Sown in the heat of summer to stand through winter.' },
+    root:     { name: 'Roots',      note: 'Direct-sown; they resent being moved.' },
+    allium:   { name: 'Onions',     note: 'Long season, daylength-sensitive, very forgiving.' },
+    legume:   { name: 'Legumes',    note: 'Autumn-sown here. They fix their own nitrogen.' },
+    herb:     { name: 'Herbs',      note: 'Small space, high return, mostly drought-tolerant.' },
+    fruit:    { name: 'Fruit',      note: 'Planted, not sown. You are buying years, not weeks.' }
+  };
+
+  function a(id, name, pt, family, ease, tender, sow, harvest, dtm, spacing, water, sun, note, confidence) {
+    return { id: id, name: name, pt: pt, family: family, kind: 'annual', ease: ease, tender: tender,
+             sow: sow, harvest: harvest, dtm: dtm, spacing: spacing, water: water, sun: sun,
+             note: note, confidence: confidence || 'high' };
+  }
+  function p(id, name, pt, family, ease, plant, harvest, years, spacing, water, sun, note, confidence) {
+    return { id: id, name: name, pt: pt, family: family, kind: 'perennial', ease: ease, tender: false,
+             sow: plant, harvest: harvest, years: years, spacing: spacing, water: water, sun: sun,
+             note: note, confidence: confidence || 'high' };
+  }
+  function w(mode, from, to) { return { mode: mode, from: from, to: to }; }
+  function h(from, to) { return { from: from, to: to }; }
+
+  var CROPS = [
+    /* ---- Fruiting: the summer crops, all gated by the last frost ---- */
+    a('tomato', 'Tomato', 'tomate', 'fruiting', 2, true,
+      [w('indoor', '01-15', '03-15'), w('direct', '03-15', '05-31')],
+      [h('06-15', '10-31')], [60, 85], 50, 'high', 'full',
+      'Start indoors six weeks before your last frost, plant out once nights hold above 10°C.'),
+    a('pepper', 'Sweet pepper', 'pimento', 'fruiting', 2, true,
+      [w('indoor', '01-15', '03-01'), w('direct', '04-01', '05-31')],
+      [h('07-01', '10-31')], [70, 95], 40, 'medium', 'full',
+      'Slower off the mark than tomatoes and needs the same heat. Worth the wait.'),
+    a('chilli', 'Chilli', 'malagueta', 'fruiting', 2, true,
+      [w('indoor', '01-01', '02-28'), w('direct', '04-01', '05-31')],
+      [h('07-15', '11-15')], [75, 100], 40, 'medium', 'full',
+      'Germinates slowly and needs bottom heat. Once away, it outlasts everything.'),
+    a('aubergine', 'Aubergine', 'beringela', 'fruiting', 3, true,
+      [w('indoor', '01-15', '03-01'), w('direct', '04-15', '06-01')],
+      [h('07-01', '10-15')], [75, 100], 55, 'medium', 'full',
+      'The most heat-hungry of the three. Marginal north of the Douro without shelter.', 'medium'),
+    a('courgette', 'Courgette', 'courgette', 'fruiting', 1, true,
+      [w('direct', '04-01', '07-15')],
+      [h('06-01', '10-31')], [45, 60], 90, 'high', 'full',
+      'Two plants feed a household. Three is a mistake you make once.'),
+    a('cucumber', 'Cucumber', 'pepino', 'fruiting', 2, true,
+      [w('direct', '04-15', '07-01')],
+      [h('06-15', '09-30')], [50, 70], 40, 'high', 'full',
+      'Give it something to climb; sprawling fruit rots on hot ground.'),
+    a('pumpkin', 'Pumpkin & squash', 'abóbora', 'fruiting', 1, true,
+      [w('direct', '04-15', '06-15')],
+      [h('09-01', '11-15')], [100, 130], 150, 'medium', 'full',
+      'Needs room and little else. Cure the fruit in the sun before storing.'),
+    a('melon', 'Melon', 'melão', 'fruiting', 3, true,
+      [w('direct', '05-01', '06-15')],
+      [h('07-15', '09-30')], [80, 110], 100, 'medium', 'full',
+      'Wants a long hot run and dry ripening. Difficult on the Atlantic coast.', 'medium'),
+    a('watermelon', 'Watermelon', 'melancia', 'fruiting', 3, true,
+      [w('direct', '05-01', '06-10')],
+      [h('08-01', '09-30')], [85, 110], 120, 'medium', 'full',
+      'Interior heat crop. Coastal summers rarely finish it.', 'medium'),
+
+    /* ---- Legumes: autumn-sown here, which surprises northern growers ---- */
+    a('broadbean', 'Broad bean', 'fava', 'legume', 1, false,
+      [w('direct', '10-01', '12-31')],
+      [h('03-01', '06-15')], [180, 220], 25, 'low', 'full',
+      'Sown into autumn soil, stands the winter, crops before anything else. The regional staple.'),
+    a('pea', 'Pea', 'ervilha', 'legume', 1, false,
+      [w('direct', '10-01', '02-15')],
+      [h('02-15', '06-15')], [90, 120], 15, 'medium', 'full',
+      'Autumn or late winter. Sown in spring it meets the heat and stops.'),
+    a('greenbean', 'Green bean', 'feijão-verde', 'legume', 1, true,
+      [w('direct', '04-01', '07-31')],
+      [h('06-01', '10-31')], [55, 75], 20, 'medium', 'full',
+      'Sow a short row every three weeks rather than one long row once.'),
+    a('chickpea', 'Chickpea', 'grão-de-bico', 'legume', 2, false,
+      [w('direct', '02-01', '03-31')],
+      [h('06-15', '07-31')], [120, 150], 25, 'low', 'full',
+      'Dry-farmed for centuries here. Wants poor soil and no irrigation once up.'),
+
+    /* ---- Leaves: cool-season, and high summer is the dead zone ---- */
+    a('lettuce', 'Lettuce', 'alface', 'leaf', 1, false,
+      [w('direct', '02-01', '05-15'), w('direct', '08-15', '11-15')],
+      [h('04-01', '06-30'), h('10-01', '01-31')], [45, 70], 25, 'high', 'part',
+      'Sow little and often. Cut-and-come-again gives three harvests from one sowing.'),
+    a('chard', 'Swiss chard', 'acelga', 'leaf', 1, false,
+      [w('direct', '02-15', '05-15'), w('direct', '08-01', '10-15')],
+      [h('05-01', '02-28')], [55, 70], 30, 'medium', 'part',
+      'The most forgiving leaf there is. One sowing crops for eight months.'),
+    a('spinach', 'Spinach', 'espinafre', 'leaf', 2, false,
+      [w('direct', '09-01', '11-15'), w('direct', '02-01', '03-15')],
+      [h('10-15', '04-30')], [40, 55], 20, 'medium', 'part',
+      'Bolts the moment it feels heat. Autumn sowings are the reliable ones.'),
+    a('rocket', 'Rocket', 'rúcula', 'leaf', 1, false,
+      [w('direct', '09-01', '11-30'), w('direct', '02-01', '04-15')],
+      [h('10-01', '05-31')], [28, 45], 15, 'medium', 'part',
+      'Four weeks from seed to plate. The fastest thing you can grow.'),
+    a('lambslettuce', "Lamb's lettuce", 'canónigos', 'leaf', 2, false,
+      [w('direct', '09-01', '11-15')],
+      [h('11-01', '03-31')], [60, 90], 10, 'medium', 'part',
+      'Sits under winter rain doing nothing, then feeds you in January.'),
+    a('endive', 'Escarole & endive', 'escarola', 'leaf', 2, false,
+      [w('direct', '07-01', '09-15')],
+      [h('10-01', '01-31')], [80, 100], 35, 'medium', 'full',
+      'Sown in the worst of the heat for a winter harvest. Blanch the heart to sweeten it.'),
+
+    /* ---- Brassicas: sown in summer heat to stand through winter ---- */
+    a('kale', 'Kale', 'couve-galega', 'brassica', 1, false,
+      [w('indoor', '06-01', '08-15'), w('direct', '07-01', '09-30')],
+      [h('10-01', '03-31')], [70, 95], 50, 'medium', 'full',
+      'Hardier than the winter. Picks better after the first cold nights.'),
+    a('cabbage', 'Cabbage', 'repolho', 'brassica', 2, false,
+      [w('indoor', '06-15', '08-31'), w('direct', '02-01', '03-31')],
+      [h('11-01', '04-30')], [90, 120], 45, 'medium', 'full',
+      'Net it or the cabbage white will find it within a week.'),
+    a('broccoli', 'Broccoli', 'brócolos', 'brassica', 2, false,
+      [w('indoor', '06-15', '08-15'), w('direct', '07-01', '09-15')],
+      [h('10-15', '02-28')], [85, 110], 50, 'medium', 'full',
+      'Cut the main head and it keeps producing side shoots for two months.'),
+    a('cauliflower', 'Cauliflower', 'couve-flor', 'brassica', 3, false,
+      [w('indoor', '06-15', '08-01'), w('direct', '07-01', '08-31')],
+      [h('11-01', '02-28')], [100, 130], 55, 'high', 'full',
+      'Unforgiving. Any check in growth — heat, drought, transplant shock — and it never hearts up.', 'medium'),
+    a('kohlrabi', 'Kohlrabi', 'couve-rábano', 'brassica', 2, false,
+      [w('direct', '08-01', '10-15'), w('direct', '02-15', '04-01')],
+      [h('10-01', '05-31')], [55, 70], 25, 'medium', 'full',
+      'Pull it at tennis-ball size. Larger and it goes woody.'),
+
+    /* ---- Roots: direct-sown, they resent transplanting ---- */
+    a('carrot', 'Carrot', 'cenoura', 'root', 2, false,
+      [w('direct', '02-01', '05-15'), w('direct', '08-01', '10-15')],
+      [h('05-01', '01-31')], [70, 100], 5, 'medium', 'full',
+      'Stony or freshly manured ground forks the roots. Sow thinly; thinning smells them out for carrot fly.'),
+    a('beetroot', 'Beetroot', 'beterraba', 'root', 1, false,
+      [w('direct', '02-15', '05-15'), w('direct', '08-01', '09-30')],
+      [h('05-15', '12-31')], [60, 90], 10, 'medium', 'full',
+      'Each seed is a cluster of several. Thin hard or you get a tangle.'),
+    a('radish', 'Radish', 'rabanete', 'root', 1, false,
+      [w('direct', '09-01', '04-30')],
+      [h('10-01', '05-31')], [25, 35], 5, 'medium', 'part',
+      'Ready in a month. The one crop that rewards impatience.'),
+    a('turnip', 'Turnip', 'nabo', 'root', 1, false,
+      [w('direct', '08-01', '10-31')],
+      [h('10-01', '02-28')], [50, 70], 15, 'medium', 'full',
+      'The greens are as good as the root, and ready far sooner.'),
+    a('potato', 'Potato', 'batata', 'root', 1, false,
+      [w('direct', '02-01', '04-15'), w('direct', '08-15', '09-15')],
+      [h('05-15', '12-31')], [90, 120], 35, 'medium', 'full',
+      'Plant sprouted seed potatoes, not supermarket ones. Earth up twice as they grow.'),
+    a('sweetpotato', 'Sweet potato', 'batata-doce', 'root', 2, true,
+      [w('direct', '05-01', '06-15')],
+      [h('10-01', '11-30')], [110, 140], 40, 'low', 'full',
+      'Planted as slips, not tubers. Wants heat and tolerates drought once rooted.'),
+    a('parsnip', 'Parsnip', 'pastinaca', 'root', 3, false,
+      [w('direct', '02-15', '05-15')],
+      [h('10-01', '02-28')], [120, 180], 20, 'medium', 'full',
+      'Slow, erratic germination — use fresh seed every year. Sweetens after cold.', 'medium'),
+
+    /* ---- Alliums ---- */
+    a('garlic', 'Garlic', 'alho', 'allium', 1, false,
+      [w('direct', '10-15', '12-31')],
+      [h('06-01', '07-31')], [210, 270], 15, 'low', 'full',
+      'In before the shortest day, out after the longest. Plant cloves point up.'),
+    a('onion', 'Onion', 'cebola', 'allium', 2, false,
+      [w('direct', '09-01', '11-15'), w('indoor', '12-01', '02-15')],
+      [h('05-15', '08-31')], [150, 210], 15, 'medium', 'full',
+      'Autumn-sown and transplanted in winter is the traditional route here.'),
+    a('leek', 'Leek', 'alho-francês', 'allium', 2, false,
+      [w('indoor', '01-15', '04-15')],
+      [h('09-01', '02-28')], [150, 200], 15, 'medium', 'full',
+      'Transplant into a deep hole and water in rather than firming — that blanches the shank.'),
+    a('springonion', 'Spring onion', 'cebolinho', 'allium', 1, false,
+      [w('direct', '02-01', '04-30'), w('direct', '08-01', '10-31')],
+      [h('05-01', '01-31')], [60, 80], 5, 'medium', 'part',
+      'Takes almost no room. Sow a pinch between slower crops.'),
+
+    /* ---- Herbs: annual ---- */
+    a('basil', 'Basil', 'manjericão', 'herb', 1, true,
+      [w('indoor', '02-15', '04-01'), w('direct', '04-15', '06-30')],
+      [h('06-01', '10-15')], [50, 70], 25, 'medium', 'full',
+      'Pinch the growing tip early and keep pinching. Never let it flower.'),
+    a('parsley', 'Parsley', 'salsa', 'herb', 2, false,
+      [w('direct', '02-01', '05-31'), w('direct', '08-15', '10-15')],
+      [h('05-01', '03-31')], [70, 90], 20, 'medium', 'part',
+      'Germinates slowly enough that people give up on it. Soak the seed overnight.'),
+    a('coriander', 'Coriander', 'coentros', 'herb', 2, false,
+      [w('direct', '02-15', '04-30'), w('direct', '09-01', '10-31')],
+      [h('04-01', '12-31')], [40, 60], 15, 'medium', 'part',
+      'Bolts in heat, so sow in the shoulders of the year and sow often.'),
+
+    /* ---- Herbs: perennial, planted rather than sown ---- */
+    p('rosemary', 'Rosemary', 'alecrim', 'herb', 1,
+      [w('plant', '10-01', '03-31')],
+      [h('01-01', '12-31')], [0, 1], 80, 'low', 'full',
+      'Native to this climate. Plant it, forget it, never water it again.'),
+    p('thyme', 'Thyme', 'tomilho', 'herb', 1,
+      [w('plant', '10-01', '04-30')],
+      [h('01-01', '12-31')], [0, 1], 30, 'low', 'full',
+      'Wants sharp drainage and neglect. Kills easily with kindness.'),
+    p('oregano', 'Oregano', 'orégãos', 'herb', 1,
+      [w('plant', '03-01', '05-31')],
+      [h('05-01', '10-31')], [0, 1], 35, 'low', 'full',
+      'Strongest in flavour just as it comes into flower.'),
+    p('mint', 'Mint', 'hortelã', 'herb', 1,
+      [w('plant', '03-01', '05-31')],
+      [h('04-01', '11-30')], [0, 1], 30, 'high', 'part',
+      'Plant it in a container. In open ground it takes the whole bed.'),
+    p('chives', 'Chives', 'cebolinha', 'herb', 1,
+      [w('plant', '02-15', '05-15')],
+      [h('04-01', '11-30')], [0, 1], 20, 'medium', 'part',
+      'Dies back in winter and returns every spring without being asked.'),
+
+    /* ---- Perennial fruit: you are buying years, not weeks ---- */
+    p('strawberry', 'Strawberry', 'morango', 'fruit', 1,
+      [w('plant', '09-15', '11-30'), w('plant', '02-01', '03-15')],
+      [h('04-01', '06-30')], [1, 1], 30, 'medium', 'full',
+      'Autumn planting fruits the following spring. Replace the plants every third year.'),
+    p('fig', 'Fig', 'figueira', 'fruit', 1,
+      [w('plant', '11-01', '02-28')],
+      [h('07-01', '09-30')], [2, 3], 400, 'low', 'full',
+      'Thrives on being ignored in poor dry ground. Rich soil gives leaves and no fruit.'),
+    p('lemon', 'Lemon', 'limoeiro', 'fruit', 2,
+      [w('plant', '03-01', '05-31')],
+      [h('11-01', '04-30')], [2, 3], 300, 'medium', 'full',
+      'Container-friendly, so it moves out of the frost. Feed it far more than you expect.'),
+    p('orange', 'Orange', 'laranjeira', 'fruit', 2,
+      [w('plant', '03-01', '05-31')],
+      [h('12-01', '04-30')], [3, 4], 400, 'medium', 'full',
+      'Wants a genuinely frost-free spot. Slower to crop than lemon.'),
+    p('grape', 'Grapevine', 'videira', 'fruit', 2,
+      [w('plant', '11-15', '03-15')],
+      [h('08-15', '10-15')], [3, 3], 150, 'low', 'full',
+      'Prune hard in winter — the discipline is the whole craft.'),
+    p('olive', 'Olive', 'oliveira', 'fruit', 1,
+      [w('plant', '10-01', '04-30')],
+      [h('10-15', '12-15')], [4, 5], 500, 'low', 'full',
+      'Outlives you. Nothing you plant asks less and gives longer.'),
+    p('almond', 'Almond', 'amendoeira', 'fruit', 2,
+      [w('plant', '11-01', '02-28')],
+      [h('08-15', '09-30')], [3, 4], 500, 'low', 'full',
+      'Flowers in January, which is exactly the risk: a late frost takes the crop.', 'medium'),
+    p('pomegranate', 'Pomegranate', 'romãzeira', 'fruit', 1,
+      [w('plant', '11-01', '03-31')],
+      [h('09-15', '11-15')], [3, 3], 300, 'low', 'full',
+      'Handles heat, drought and poor soil. Splits if watered erratically as fruit ripens.'),
+    p('loquat', 'Loquat', 'nespereira', 'fruit', 1,
+      [w('plant', '10-01', '03-31')],
+      [h('04-01', '05-31')], [3, 4], 400, 'low', 'full',
+      'Fruits in April when nothing else does. Flowers in autumn, so hard winters cost a crop.'),
+    p('raspberry', 'Raspberry', 'framboesa', 'fruit', 2,
+      [w('plant', '11-01', '03-15')],
+      [h('06-01', '10-31')], [1, 2], 50, 'high', 'part',
+      'Autumn-fruiting kinds suit this climate better — they dodge the worst heat.'),
+    p('blackberry', 'Blackberry', 'amora', 'fruit', 1,
+      [w('plant', '11-01', '03-15')],
+      [h('07-15', '09-30')], [2, 2], 200, 'medium', 'part',
+      'Choose a thornless variety unless you enjoy bleeding for fruit.'),
+    p('blueberry', 'Blueberry', 'mirtilo', 'fruit', 3,
+      [w('plant', '10-01', '03-31')],
+      [h('06-01', '08-31')], [2, 3], 120, 'high', 'part',
+      'Needs genuinely acid soil and soft water. In most Iberian gardens that means a container of ericaceous compost.', 'medium'),
+    p('kiwi', 'Kiwi', 'quivi', 'fruit', 3,
+      [w('plant', '11-01', '03-15')],
+      [h('10-15', '11-30')], [3, 4], 400, 'high', 'full',
+      'Needs a male and a female plant, a strong structure, and more water than anything else here.', 'medium'),
+    p('passionfruit', 'Passion fruit', 'maracujá', 'fruit', 2,
+      [w('plant', '03-01', '05-31')],
+      [h('09-01', '12-15')], [2, 2], 200, 'medium', 'full',
+      'Fast, hungry climber. Cut it back hard each spring or it becomes a thicket.', 'medium')
+  ];
+
+  global.PlantLifeCrops = { CROPS: CROPS, FAMILIES: FAMILIES };
+}(window));
