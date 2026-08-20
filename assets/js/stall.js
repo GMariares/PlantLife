@@ -62,6 +62,7 @@
     location: null,      // { name, lat, lon, regionId, regionName, confidence, km }
     frost: null,         // { last, first } grower override
     basket: [],
+    hidden: [],
     month: new Date().getMonth(),
     monthPinned: false,
     family: 'all',
@@ -85,12 +86,13 @@
       if (s.location) state.location = s.location;
       if (s.frost) state.frost = s.frost;
       if (Array.isArray(s.basket)) state.basket = s.basket;
+      if (Array.isArray(s.hidden)) state.hidden = s.hidden;
     } catch (e) { /* corrupt or unavailable storage is not fatal; start fresh */ }
   }
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        location: state.location, frost: state.frost, basket: state.basket
+        location: state.location, frost: state.frost, basket: state.basket, hidden: state.hidden
       }));
     } catch (e) { /* private mode: the session still works, it just will not persist */ }
   }
@@ -209,7 +211,16 @@
 
   // ── Evaluation ───────────────────────────────────────────────────────────
   function visibleCrops() {
-    return state.family === 'all' ? CROPS : CROPS.filter(function (c) { return c.family === state.family; });
+    return CROPS.filter(function (c) {
+      if (state.hidden.indexOf(c.id) !== -1) return false;
+      return state.family === 'all' || c.family === state.family;
+    });
+  }
+  function hiddenCrops() {
+    return state.hidden.map(function (id) {
+      for (var i = 0; i < CROPS.length; i++) if (CROPS[i].id === id) return CROPS[i];
+      return null;
+    }).filter(Boolean);
   }
   /* Conditions only gate the CURRENT month: a forecast says nothing about
      what April will be like, so scrubbing away from now drops the gate. */
@@ -414,6 +425,10 @@
         (c.confidence === 'medium'
           ? '<p class="crate__caveat">' + icon('frost') + 'Timing for this crop varies widely across the region — treat these dates as a starting point, not a fixed schedule.</p>'
           : '') +
+        '<button class="crate__drop" type="button" data-act="hide" data-id="' + c.id + '">' +
+          icon('close') + 'I don’t grow this' +
+          (picked ? '<span class="crate__drop-note">also takes it out of your garden</span>' : '') +
+        '</button>' +
       '</div>' : '') +
       '</article></li>';
   }
@@ -443,6 +458,18 @@
   }
 
   function renderStall() {
+    if (!visibleCrops().length && state.hidden.length) {
+      el.stall.innerHTML = '<section class="row"><div class="quiet">' +
+        '<h2 class="quiet__head">The stall is empty</h2>' +
+        '<p class="quiet__text">Every crop' +
+        (state.family === 'all' ? '' : ' in this family') +
+        ' is off the stall. Nothing is lost — put any of them back and its dates return exactly as they were.</p>' +
+        '<div class="quiet__next">' +
+        '<button class="btn btn--dark" type="button" data-act="unhide-all">Put them all back</button>' +
+        (state.family === 'all' ? '' : '<button class="btn btn--dark" type="button" data-act="family" data-f="all">Show all crops</button>') +
+        '</div></div></section>';
+      return;
+    }
     var groups = S.order(evaluated());
     var front = groups.front, back = groups.back;
     var monthWord = state.monthPinned && state.month !== new Date().getMonth()
@@ -464,6 +491,24 @@
         '<span class="row__count">' + back.length + ' waiting</span></div>' +
         '<ul class="crates">' + back.map(crateHTML).join('') + '</ul></section>';
     }
+    var off = hiddenCrops().filter(function (c) {
+      return state.family === 'all' || c.family === state.family;
+    });
+    if (off.length) {
+      html += '<section class="row row--off">' +
+        '<div class="row__head"><h2 class="row__title">Off the stall</h2>' +
+        '<span class="row__count">' + off.length + ' you don’t grow</span></div>' +
+        '<ul class="offstall">' + off.map(function (c) {
+          return '<li><span class="offstall__item" style="--field:var(--f-' + c.family + ')">' +
+            '<span class="offstall__name">' + esc(c.name) + '</span>' +
+            '<button class="offstall__back" type="button" data-act="unhide" data-id="' + c.id + '"' +
+            ' aria-label="Put ' + esc(c.name) + ' back on the stall">put back</button>' +
+            '</span></li>';
+        }).join('') + '</ul>' +
+        '<button class="btn btn--dark" type="button" data-act="unhide-all">Put them all back</button>' +
+        '</section>';
+    }
+
     el.stall.innerHTML = html;
   }
 
@@ -578,6 +623,26 @@
       renderStall();
       var still = document.querySelector('[data-act="open"][data-id="' + state.opened + '"]');
       if (still) still.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+    else if (act === 'hide') {
+      var hid = t.dataset.id;
+      if (state.hidden.indexOf(hid) === -1) state.hidden.push(hid);
+      var inGarden = state.basket.indexOf(hid);
+      if (inGarden !== -1) state.basket.splice(inGarden, 1);
+      if (state.opened === hid) state.opened = null;
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
+    }
+    else if (act === 'unhide') {
+      var back = state.hidden.indexOf(t.dataset.id);
+      if (back !== -1) state.hidden.splice(back, 1);
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
+    }
+    else if (act === 'unhide-all') {
+      state.hidden = [];
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
     }
     else if (act === 'pick') {
       var id = t.dataset.id, at = state.basket.indexOf(id);
