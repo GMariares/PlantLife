@@ -4,7 +4,10 @@ Output of `/impeccable shape`. Planning only: no code, no direction contract, no
 The canonical `.impeccable/surfaces/` brief is written later by new-work, at build time, once a
 concrete target file exists.
 
-**Status:** awaiting confirmation.
+**Status:** confirmed. Reviewed and approved, including the two decisions flagged for argument:
+perennial fruit is a distinct timing model (§6, §7.4) and "nothing sowable this month" is a
+first-class designed state (§5). The structural reading in §0 — first run is a state of the home
+stall, not a separate route — went uncontested and stands.
 
 ---
 
@@ -147,9 +150,12 @@ words, and marked in form. Sun glare and colour-blindness are the same requireme
   equal in weight to the geolocation button, because geolocation is refusable and often refused.
 - **Weather unavailable** — the surface falls back to climate-normal dates and *says so on the
   board*. It never presents a normal as a live reading.
-- **Nothing sowable this month** — real in an Iberian August and a wet December. The front row can
-  legitimately be empty; the stall must read as "not now, here's what's next" rather than broken.
-  This is the state that decides whether the design is honest.
+- **Nothing sowable this month** — **confirmed in review as a first-class state, not an edge
+  case.** Real in an Iberian August and a wet December. The front row can legitimately be empty;
+  the stall must read as "not now, here's what's next" rather than broken, which means an empty
+  front row needs its own designed treatment — a named reason, the nearest upcoming window with
+  its date, and the month scrubber offered as the way forward. This is the state that decides
+  whether the design is honest, and it is built first, not last.
 - **Offline** — the catalogue and the garden are local and must still work; only live conditions
   degrade.
 - **Returning grower** — already has a location and a garden. The same stall, already answered.
@@ -199,10 +205,13 @@ words, and marked in form. Sun glare and colour-blindness are the same requireme
    both forecast and geocoding), but it is not yet a decision.
 3. **How last-frost dates are derived** — from climate normals, from a lookup table, or entered by
    the grower. The whole timing model rests on this and it is currently unresolved.
-4. **Fruit and perennials** — my proposal is that perennial fruit crates show a *planting* window
-   and years-to-first-harvest instead of a sowing window and days-to-harvest, marked as a distinct
-   class. You asked for "vegetables and fruit"; this needs your confirmation because it is a
-   second timing model, not a longer list.
+4. **Fruit and perennials — RESOLVED in review, no longer open.** Perennial fruit is a second
+   timing model, not a longer list. Perennial crates carry a *planting* window (bare-root and
+   container seasons) and years-to-first-harvest, where annual crates carry a sowing window and
+   days-to-harvest. The two classes share one crate grid and one label order so the stall still
+   scans as an index, but they are visibly different kinds of thing and their urgency is computed
+   differently: an annual's window closes in days, a perennial's in a season. What stays open is
+   only which fruit species make the launch set.
 5. **Growing space (pot, bed, plot, indoors)** — you dropped "what fits my space" from the
    suggestion basis, so it is deferred out of first run, not deleted. Where it re-enters is open.
 6. **Reminder delivery** — out of scope for this surface, still undecided product-wide.
