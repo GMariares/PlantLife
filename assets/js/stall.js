@@ -356,7 +356,10 @@
     }).join('');
     var easeWord = c.ease === 1 ? 'easy' : c.ease === 2 ? 'moderate' : 'tricky';
     var span = c.kind === 'perennial'
-      ? (c.years[0] === 0 ? 'crops year one' : c.years[0] === c.years[1] ? c.years[0] + ' yrs to fruit' : c.years[0] + '–' + c.years[1] + ' yrs to fruit')
+      ? (c.years[0] === 0 ? 'crops year one'
+         : c.years[0] === c.years[1]
+           ? c.years[0] + (c.years[0] === 1 ? ' yr to fruit' : ' yrs to fruit')
+           : c.years[0] + '–' + c.years[1] + ' yrs to fruit')
       : c.dtm[0] + '–' + c.dtm[1] + ' days';
 
     var nowMonth = state.month;
