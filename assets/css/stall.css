@@ -173,6 +173,14 @@ body {
 .suggest button:hover { background: var(--chalk); color: var(--slate); }
 .note { margin: .6rem 0 0; font-size: .75rem; font-stretch: 88%; color: var(--chalk-dim); max-width: 66ch; }
 .note--warn { color: #E8C46A; }
+.alert {
+  display: flex; align-items: center; gap: .5rem;
+  margin: .6rem 0 0; padding: .4rem .6rem;
+  background: #E8C46A; color: #1E231C;
+  font-size: .8125rem; font-stretch: 92%; font-weight: 600;
+  letter-spacing: .01em; max-width: 62ch;
+}
+.alert svg { width: 18px; height: 18px; flex: 0 0 auto; }
 
 /* ── The month rail: one axis that moves the whole stall ──────────────── */
 .rail {
@@ -243,7 +251,7 @@ body {
 }
 .crates > li { display: flex; }
 .crate { width: 100%; }
-.row--rest .crates { grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr)); gap: 1rem; }
+.row--rest .crates { grid-template-columns: repeat(auto-fill, minmax(14.25rem, 1fr)); gap: 1rem; }
 
 /* A crate, not a card: squared, slatted board, produce sitting in the top of it. */
 .crate {
@@ -310,7 +318,7 @@ body {
 .bar__key .k-sow { background: var(--ink-2); }
 .bar__key .k-harvest { background: color-mix(in srgb, var(--ink-2) 34%, #E7EADF); box-shadow: inset 0 0 0 1px var(--ink-2); }
 
-.crate__line { margin: 0; font-size: .875rem; font-stretch: 92%; line-height: 1.35; min-height: 2.7em; }
+.crate__line { display: block; margin: 0; font-size: .875rem; font-stretch: 92%; line-height: 1.35; min-height: 2.7em; }
 .crate--urgent .crate__line { font-size: 1rem; font-weight: 600; }
 .crate__label { padding-bottom: .55rem; }
 .crate__more {
@@ -322,6 +330,8 @@ body {
 }
 .crate__more:hover { background: rgba(23,26,22,.1); color: var(--ink); }
 .crate__chev { width: 15px; height: 15px; flex: 0 0 auto; transition: transform .16s var(--ease-out); }
+.row--rest .crate__more { font-size: .6875rem; }
+.crate__more .ease, .crate__span { white-space: nowrap; }
 .crate--open .crate__chev { transform: rotate(180deg); }
 .crate--open .crate__more { background: var(--ink); color: var(--ground); }
 .crate__span { margin-left: auto; }
@@ -343,9 +353,15 @@ body {
 .crate__caveat svg { width: 15px; height: 15px; flex: 0 0 auto; margin-top: .1rem; }
 
 /* Live conditions overruling the calendar: the window is open, the weather is not. */
-.crate--held .crate__produce { background: var(--zinc); color: var(--ink); }
 .crate--held .crate__line { font-weight: 600; }
 .crate--held { border-color: var(--ink); border-bottom-color: var(--ink); }
+.crate--held .crate__produce::after {
+  content: 'hold'; position: absolute; left: 0; right: 0; bottom: 0;
+  background: var(--ink); color: var(--ground);
+  font-size: .625rem; font-stretch: 80%; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; padding: .12rem .85rem;
+}
+.crate--held .crate__produce { padding-bottom: 1.4rem; }
 .ease { display: inline-flex; gap: 3px; align-items: center; }
 .ease__pip { width: 7px; height: 7px; border: 1px solid var(--ink-2); border-radius: 50%; }
 .ease__pip--on { background: var(--ink-2); }

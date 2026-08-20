@@ -275,17 +275,20 @@
     }
     if (f.overridden) notes.push('Using the frost dates you set.');
     if (state.weatherFailed) notes.push('Live conditions are unavailable right now — dates below come from the regional calendar alone, not from today’s weather.');
+    var alert = '';
     if (w && w.frostRisk) {
       var scrubbed = state.monthPinned && state.month !== new Date().getMonth();
-      notes.push('Frost forecast this week: ' + w.min + '°C. Hold anything tender.' +
-        (scrubbed ? ' That is this week — it is not being applied to ' + S.MONTH_FULL[state.month] + '.' : ''));
+      alert = '<p class="alert">' + icon('frost') + 'Frost forecast this week: ' + w.min +
+        '°C. Anything tender is held back below.' +
+        (scrubbed ? ' That is this week — not ' + S.MONTH_FULL[state.month] + '.' : '') + '</p>';
     }
 
     return '' +
       '<div class="board__place">' +
         '<h1 class="board__name">' + esc(loc.name) + '</h1>' +
         '<p class="board__meta">' + meta.join(' · ') + '</p>' +
-        (notes.length ? '<p class="note' + ((state.outOfArea || (w && w.frostRisk)) ? ' note--warn' : '') + '">' + notes.join(' ') + '</p>' : '') +
+        (notes.length ? '<p class="note' + (state.outOfArea ? ' note--warn' : '') + '">' + notes.join(' ') + '</p>' : '') +
+        alert +
         (state.editingFrost ? frostForm(f) : '') +
         '<div class="ask__row" style="margin-top:.7rem">' +
           '<button class="btn" type="button" data-act="reset">' + icon('pin') + 'Change place</button>' +
