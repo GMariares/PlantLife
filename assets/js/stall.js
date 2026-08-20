@@ -556,7 +556,7 @@
         '<div class="row__head"><h2 class="row__title">Off the stall</h2>' +
         '<span class="row__count">' + off.length + ' you don’t grow</span></div>' +
         '<ul class="offstall">' + off.map(function (c) {
-          return '<li><span class="offstall__item" style="--field:var(--f-' + c.family + ')">' +
+          return '<li><span class="offstall__item" style="--mark:var(--m-' + c.family + ')">' +
             '<span class="offstall__name">' + esc(c.name) + '</span>' +
             '<button class="offstall__back" type="button" data-act="unhide" data-id="' + c.id + '"' +
             ' aria-label="Put ' + esc(c.name) + ' back on the stall">put back</button>' +

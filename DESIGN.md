@@ -194,6 +194,43 @@ components:
     textColor: "{colors.slate}"
     rounded: "{rounded.none}"
     padding: "0.4rem 0.6rem"
+  crate-stagebar:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.ground}"
+    rounded: "{rounded.none}"
+    padding: "0.12rem 0.85rem"
+    typography: "{typography.micro}"
+  crate-drop:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-3}"
+    rounded: "{rounded.none}"
+    padding: "0.45rem 0.6rem"
+  crate-drop-hover:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.ground}"
+  stage-btn:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-3}"
+    rounded: "{rounded.none}"
+    padding: "0.35rem 0.55rem"
+    size: "0.6875rem"
+  stage-btn-pressed:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.ground}"
+  stage-date:
+    backgroundColor: "{colors.ground}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.none}"
+    padding: "0.3rem 0.4rem"
+    size: "0.8125rem"
+  offstall-back:
+    backgroundColor: "transparent"
+    textColor: "{colors.ink-3}"
+    rounded: "{rounded.none}"
+    padding: "0.35rem 0.55rem"
+  offstall-back-hover:
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.ground}"
 ---
 
 # Design System: PlantLife
@@ -294,8 +331,12 @@ colour used as a plane, breaks the measurement.
 **The Never-Hue-Alone Rule.** No state in this system is carried by colour alone, anywhere. Out of
 season is zinc *and* a smaller crate name *and* a lighter bottom border *and* the sentence "Next
 window opens 15 Jan". A held crop is ink-bordered *and* carries a printed `HOLD` bar across the
-bottom of its produce band *and* says why. In your garden is a 2px ink border *and* a check-marked
-"IN GARDEN" tag. Add the redundant signal before you reach for the hue.
+bottom of its produce band *and* says why. A staged crop is ink-bordered *and* carries the stage
+word printed in that same bar *and* sits in its own row *and* reports a date instead of advising
+one. In your garden is a 2px ink border *and* a check-marked "IN GARDEN" tag. Add the redundant
+signal before you reach for the hue. Verified against the build: none of the crate's four states —
+held, staged, picked, closed — is separable by hue, and the produce band's hue continues to mean
+only crop family.
 
 **The Measured 4.5 Rule.** Every foreground/background pair in this palette was solved to ≥4.5:1 by
 measurement, including composited grounds. A new colour joins the system by being measured against
@@ -327,7 +368,7 @@ the board and squeezed narrow for the crate label. Nothing here is set at its de
   board's question in the asking state ("WHERE ARE YOU GROWING?"), and the temperature readout
   (105% width). It occupies the same slot as Display — the board is either asking or answering.
 - **Title** (700, `clamp(1.125rem, 2.6vw, 1.6rem)`, 1.05, `-0.01em`, **108% width**, uppercase): row
-  headings — "SOW THIS WEEK", "NOT YET, OR NOT NOW", "OFF THE STALL". The quiet-state heading uses
+  headings — "GROWING NOW", "SOW THIS WEEK", "NOT YET, OR NOT NOW", "OFF THE STALL". The quiet-state heading uses
   the same register one step larger in width terms (106%).
 - **Crate Name** (700, 1.1875rem, 1.02, **78% width**, uppercase): the crop name inside the produce
   band, with the Portuguese name beneath at 0.75rem/88% width. Deliberately condensed so a long name
@@ -338,8 +379,8 @@ the board and squeezed narrow for the crate label. Nothing here is set at its de
 - **Label** (600, 0.75rem, `0.04–0.06em`, **80–88% width**, uppercase): every control — buttons,
   month rail, family marks, row counts, the basket's caption, the fact-list terms.
 - **Micro** (600–700, 0.625rem / 0.5625rem, `0.1–0.16em`, **74–80% width**, uppercase): the
-  ANNUAL/PERENNIAL class tag, the HOLD bar, the IN GARDEN tag, and the season bar's twelve
-  single-letter month initials.
+  ANNUAL/PERENNIAL class tag, the HOLD bar and the stage bar (identical spec), the IN GARDEN tag,
+  and the season bar's twelve single-letter month initials.
 
 ### Named Rules
 
@@ -385,6 +426,13 @@ neighbours.
 flex pair — title left, count and legend right — over a `2px` ink rule. The "off the stall"
 row demotes that rule to `1px` kraft-edge and its title to ink-2, because it is an archive, not
 a section.
+
+**Row order inside the stall** is a claim about whose knowledge wins, and it is fixed: **"Growing
+now"** (the grower's own record, only present when something is staged) → **"Sow this week"** (the
+front of the stall) → **"Not yet, or not now"** → **"Off the stall"**. The garden row keeps the full
+`2px` ink rule and an ink title — it is the one row that is explicitly *not* demoted, because what
+the grower actually did outranks what the calendar is suggesting. Anything the grower has told the
+system about themselves belongs above anything the system is telling them.
 
 **Responsive** at a single breakpoint, `46rem`:
 - The month rail reflows from `repeat(12, 1fr)` to `repeat(6, 1fr)` (two rows of six) and its active
@@ -533,8 +581,10 @@ Vertically it is four fixed zones:
 3. **Foot bar** — a 5% ink wash with a kraft-edge top rule, ink-3 label type, carrying the ease
    meter on the left, the maturity span on the right, and a chevron. Opening it inverts the bar to an
    ink plane and rotates the chevron 180° over `0.16s`.
-4. **Opened panel** (conditional) — a 45% chalk wash holding a five-term fact list, a growing note,
-   an optional uncertainty caveat, and the drop control.
+4. **Opened panel** (conditional) — a 45% chalk wash holding, in order: a five-term fact list, a
+   growing note, an optional uncertainty caveat, the stage control, and the drop control. The
+   ordering is deliberate — what the crop is, then what you did, then the way to remove it, with the
+   only irreversible-sounding action last and behind a disclosure.
 
 The **season bar** is twelve 17px cells at a 1px gap: sow months in the field colour, harvest months
 in a 34% tint of it, months that are both split by a hard-stop linear gradient at 55%, and empty
@@ -544,10 +594,17 @@ from field to **mark** colour so they stay legible against the drained band.
 **States**, each carrying at least two signals:
 - **Urgent** — crate name jumps to 1.625rem, sentence goes 600 weight.
 - **Held** (live weather overruling the calendar) — ink border on all sides, a full-width ink `HOLD`
-  bar printed across the bottom of the produce band (band padding grows to make room), sentence at
-  600 weight naming the forecast temperature.
+  bar printed across the bottom of the produce band (band padding grows to `1.4rem` to make room),
+  sentence at 600 weight naming the forecast temperature.
+- **Staged** (the grower's own record overruling the calendar) — ink border on all sides, a
+  full-width ink **stage bar** across the bottom of the produce band carrying the stage word
+  (`SOWN`, `PLANTED OUT`, `HARVESTING`, `CROPPING`, `PLANTED`, `FINISHED`), the same `1.4rem` band
+  padding, sentence at 600 weight, and the crate moves into the "Growing now" row. Staged
+  suppresses urgent, held and closed entirely: a crate the grower has spoken about is never also
+  drained to zinc or told to hold.
 - **Picked** — `2px` ink border, and an ink `✓ IN GARDEN` tag pinned into the produce band's
-  top-left.
+  top-left. The tag is suppressed on a staged crate, because the stage bar already says the crop is
+  in the garden and two badges in one band is one badge too many.
 - **Closed / out of season** — produce band drains to zinc with ink type, crate name drops to 1rem,
   the front-lip border thins from 3px to 1px, the label wash drops to 14%, sow cells go to mark colour.
 
@@ -563,6 +620,52 @@ stretch alignment to tidy a grid — pin the fields instead.
 (`aria-pressed` on take, `aria-expanded` on open). A composite object that has two actions is a
 container with two buttons, never one button that guesses at intent.
 
+**The Overrule Slot Rule.** There is exactly one place on a crate where something that outranks the
+calendar is printed: a full-width ink bar with ground-coloured micro type, flush to the bottom edge
+of the produce band, with the band's padding growing to `1.4rem` to hold it. Two things claim that
+slot — the weather (`HOLD`) and the grower's own record (the stage word) — and they are drawn to a
+single identical spec on purpose, because they are the same kind of statement: *the calendar is not
+the last word here*. They are mutually exclusive by construction; the grower's record wins, and the
+only thing that distinguishes them is the word in the bar and the row the crate is sitting in. A
+third overruling source joins the same bar, in the same ink-on-family-colour, or it does not ship.
+
+**The Report-Don't-Advise Rule.** A crate that knows nothing about the grower gives advice from the
+calendar ("Sow now — window closes 30 Sep"). A staged crate stops advising and reports from what it
+was told ("Sown 5 Aug — harvest from about 14 Sep", "Harvesting since 28 Jul"). Once the grower has
+told the system something, the system never talks over them with its own guess.
+
+### The Stage Control
+
+Inside the opened panel, above a `1px` kraft-edge rule: an uppercase ink-3 label type question —
+**"What have you actually done?"**, phrased as a question and not as a field name — over a wrapping
+row of stage buttons.
+
+- **Stage button:** squared (no chamfer, unlike the page's other controls — it is inside a crate,
+  and crate interiors are square), `1px` kraft-edge border, transparent over the slat, ink-3
+  uppercase label type at 0.6875rem/86%. Hover darkens border and text to ink. **Selected inverts to
+  a full ink plane with ground text** — the same single promotion the family mark and the crate's
+  foot bar use.
+- **Clear ("Not started"):** the same button with a **dashed** border. It appears only once a stage
+  is set, and its dashed edge is the one place in the system where a border style carries meaning:
+  this control undoes rather than sets.
+- **Date field:** a native `<input type="date">` on the limewash ground with a `1px` kraft-edge
+  border and ink text, focus shifting the border to ink. It appears only after a stage is chosen,
+  introduced by an inline uppercase label ("SOWN ON"), capped at today, and it is the only lowercase
+  numeric field in the interface because that is how a date input reads.
+- **Note:** a 0.6875rem ink-3 sentence, sentence case, stating the estimate's honesty — "Days to
+  maturity for this crop run 70–95, so the window above is an estimate from your date, not a
+  promise." It appears only when an expected-harvest window is actually being shown.
+
+**The Offered-Stages Rule.** The stage row only ever offers stages the crop can physically reach:
+an annual that can be started indoors offers sown / planted out / harvesting / finished; a
+direct-sown annual drops "planted out"; a perennial offers planted / cropping / finished. A control
+that offers a state its subject cannot occupy is a lie the interface tells; enumerate from the
+crop's own class, never from a fixed list.
+
+**The Progressive Record Rule.** The control reveals itself in three steps — question, then date,
+then caveat — and each step appears only once the previous one has an answer. No empty date field
+waits for a stage that has not been chosen; no caveat explains an estimate that is not on screen.
+
 ### The Basket Rail
 
 A slate plane fixed to the viewport bottom with a `3px` ink top rule. It carries, in order: a large
@@ -571,12 +674,35 @@ honest line — "Saved in this browser only — no account, no sync." — in dim
 the picked crops as family-coloured chips. It is the only place in the interface where a sentence is
 not uppercase and not a label, because it is the thing the grower leaves with.
 
-### The Reversal Row
+### Off The Stall (removal and its reversal)
 
-Hiding a crop lands it in an "Off the stall" row as a slat-backed item: a family-coloured square, the
-crop name, and a hairline-divided "put back" control, with a "Put them all back" button beneath. When
-every crop is hidden, the row is replaced by a quiet panel that says nothing is lost. Any removal in
-this system must land somewhere visible and reversible from where it landed.
+Removal is one pair of surfaces, and neither of them is a dialog.
+
+**The drop control** sits at the bottom of the opened crate: full-width, squared, `1px` kraft-edge
+border, transparent over the slat, ink-3 uppercase label type with a 13px close icon, inverting to a
+full ink plane on hover. It is labelled in the grower's own words — **"I don't grow this"** — not
+"Hide" or "Remove", because the grower is stating a fact about themselves, not operating the
+software. When the crop is also in their garden it carries a **sub-note** on its own line, 0.6875rem
+at weight 400 in sentence case: "also takes it out of your garden". The consequence is printed on the
+control that causes it, before the press, and it is the only place in the system where a control
+carries two registers of type at once.
+
+**The reversal row** is where it lands: an "Off the stall" row of slat-backed items — a
+family-coloured square, the crop name in sentence case, and a hairline-divided "put back" control
+that inverts to ink on hover — with a "Put them all back" dark button beneath. The row demotes its
+head rule to `1px` kraft-edge and its title to ink-2 (see Layout), because it is an archive, not a
+section. Its count is written in the grower's voice too: "3 you don't grow".
+
+**When everything is hidden**, the whole stall is replaced by the **quiet panel** — the same
+component the empty month uses — headed "The stall is empty", saying in plain language that nothing
+is lost and the dates return exactly as they were, with both ways back in its bottom row. Reusing
+the quiet panel is the point: an empty stall the grower caused is the same *kind* of answer as an
+empty stall the calendar caused, and it gets the same designed treatment rather than an error.
+
+**The Land-It-Somewhere Rule.** Any removal in this system lands in a visible row, keeps its
+identity there, and is reversible from where it landed — both one at a time and all at once. There
+is no confirm dialog anywhere in this product, and there does not need to be: nothing is destroyed,
+so nothing needs guarding.
 
 ### Browser-Drawn Surfaces
 
@@ -585,6 +711,18 @@ The parts the browser draws are themed from the palette, and a new screen inheri
 leaf-green; the scrollbar is a zinc thumb with a 3px deep-limewash inset border on a deep-limewash
 track; `:focus-visible` is a `3px` fruiting-red outline at `2px` offset; and the body carries
 `font-variant-numeric: tabular-nums` so dates and temperatures never jitter.
+
+That extends to **the widgets inside a native control**, not only the page chrome around it. The
+date field's calendar-picker button is a browser-drawn glyph the design cannot redraw, so it is
+brought into the palette instead: `::-webkit-calendar-picker-indicator` is desaturated and darkened
+(`filter: saturate(0) brightness(.35)`) until it reads as the same near-black as the ink type beside
+it, and given `cursor: pointer`.
+
+**The Themed-Native Rule.** Prefer the native control and theme it into the world; do not rebuild it
+as a custom widget to get the look. Every browser-drawn surface a screen touches — selection, caret,
+accent, scrollbar, focus ring, and any shadow-DOM part a native input exposes — is claimed by the
+palette rather than left at its default. A stock blue or a stock colour picker glyph is a hole in the
+world, and the fix is a filter or a token, never a replacement widget.
 
 ### Icons
 
@@ -597,21 +735,21 @@ emoji anywhere in the system.
 ### Motion
 
 **One authored moment.** When the place, the month, the family filter, or the hidden set changes, the
-stall is meant to physically re-lay itself: positions are measured before the re-render, the
+stall physically re-lays itself: every `.crate[data-crop]` is measured before the re-render, the
 difference is applied as an inverted transform, and the crates play back to their new positions once
-over `0.52s` with `cubic-bezier(.16, 1, .3, 1)`. Answering the board's question also flashes it
-brighter and settles over `0.5s`. Everything else is a `0.12–0.16s linear` colour or transform
-change on hover and disclosure. Under `prefers-reduced-motion: reduce` all animation and transition
-durations are forced to `0.001ms` and the re-lay is skipped entirely before it measures anything.
+over `0.52s` with `cubic-bezier(.16, 1, .3, 1)`. The identifier the measure keys on lives on the
+`<article>` itself, so a crate is tracked across a re-render as one object even though its two
+buttons carry their own ids. Answering the board's question also flashes it brighter and settles over
+`0.5s`. Everything else is a `0.12–0.16s linear` colour or transform change on hover and disclosure.
+Under `prefers-reduced-motion: reduce` all animation and transition durations are forced to `0.001ms`
+and the re-lay is skipped entirely before it measures anything.
 
-> **Built-world note.** The re-lay does not currently play. `withRelay()` collects nodes with
-> `document.querySelectorAll('.crate[data-id]')`, but the rendered crate is
-> `<article class="crate">` with `data-id` on its two child buttons instead — so the selector matches
-> nothing, `moved` is empty, and the function returns before adding `.is-relaying`. The CSS rule
-> `.is-relaying .crate { transition: transform … }` is therefore dead. Recorded here as the system's
-> intended and only motion moment; fixing it is a one-attribute change (put `data-id` on the
-> `<article>`), and any new screen should use the same measure-render-invert-play pattern rather than
-> fading elements individually.
+**What earns the re-lay** is a change to the *composition* of the stall — the place, the month, the
+family filter, a crop going off the stall or coming back, and a stage being set, changed or cleared
+(which moves the crate into or out of the "Growing now" row). What does not earn it is a change
+confined to a single crate: taking a crop into the garden and opening or closing a crate both
+re-render in place, with no measure and no transform. If the crate is in the same spot afterwards,
+nothing animates.
 
 ### Named Rules
 
@@ -636,7 +774,19 @@ scroll-triggered anything.
 - **Do** hold grids with fixed field heights and `align-items: start`, so one item can expand without
   disturbing its neighbours.
 - **Do** join any new sticky band to the measured `--board-h` chain rather than hard-coding an offset.
-- **Do** land every destructive action somewhere visible and reversible from the row it lands in.
+- **Do** land every destructive action somewhere visible and reversible from the row it lands in —
+  one at a time and all at once — instead of guarding it with a confirm dialog.
+- **Do** print a control's side effect on the control itself, before the press, in the smaller
+  sentence-case register ("also takes it out of your garden").
+- **Do** let what the grower recorded outrank what the system computed: move that crate above the
+  advice rows, and switch its sentence from advice to report.
+- **Do** print anything that overrules the calendar in the crate's one overrule slot — the ink bar
+  across the bottom of the produce band — in ground-coloured micro type.
+- **Do** enumerate a control's options from its subject's own class, so it never offers a state the
+  subject cannot occupy.
+- **Do** theme the browser's own widgets into the palette — including the shadow-DOM parts of a
+  native input — rather than rebuilding the control to get the look.
+- **Do** reuse the quiet panel for any empty stall, whatever emptied it.
 - **Do** draw new icons on the 24×24 grid at `1.75` stroke with round caps, in the same authored set.
 - **Do** state uncertainty in the interface — the medium-confidence caveat, the out-of-area note, the
   "working from the calendar alone" line, and the storage disclosure are design elements, not
@@ -661,21 +811,41 @@ scroll-triggered anything.
   scroll-triggered motion.
 - **Don't** show an empty result as a failure. An empty front row gets a designed panel with the
   reason in the grower's terms, the next real date, and the way to it.
+- **Don't** open a dialog to confirm a removal, or anything else. Nothing here is destroyed, so
+  nothing needs guarding; the reversal row is the confirmation.
+- **Don't** stack two badges in one produce band. If the stage bar is saying the crop is in the
+  garden, the IN GARDEN tag comes off.
+- **Don't** invent a second place for "the calendar is overruled here". There is one bar, at the
+  bottom of the produce band, and a new overruling source shares it or does not ship.
+- **Don't** animate a change that lives inside a single crate. The re-lay is for the stall
+  recomposing, not for a badge or a disclosure.
+- **Don't** name a control after the software's verb when the grower has a sentence for it. "I don't
+  grow this" and "What have you actually done?" beat "Hide" and "Status".
 
 <!--
 NOT CANONIZED — defects the build carries, recorded so they are not inherited:
 
-1. `--kraft` (#CEC6B2) and `--kraft-2` (#C2B9A2) are declared in `:root` and never referenced by
-   any rule. #CEC6B2 is the slat tile's base fill, but it is written literally inside the SVG data
-   URI rather than through the custom property, so the token has no live binding. #C2B9A2 is unused
-   entirely. Neither is recorded above as a system token; either wire them up or delete them.
-2. Three reused literals are not tokenized: `#E8C46A` (caution amber, 2 uses), `#E7EADF` (the
-   colour-mix partner behind every harvest tint, 3 uses), and `#58614F` (the on-slate field border,
-   2 uses). The amber is recorded in the frontmatter as `caution-amber` because it is a real system
-   role that reappears; the other two are composition details, not palette entries.
-3. The FLIP re-lay in `withRelay()` never runs — see the built-world note under Motion. The system's
-   one motion moment is documented as intent, not as observed behaviour.
+1. One reused literal is still untokenized: `#E7EADF`, the colour-mix partner behind every harvest
+   tint (3 uses). It is a composition detail rather than a palette entry, so it is not recorded in
+   the frontmatter; `#C9CFC2` (the empty season-bar cell) and `#9AA394` (the field placeholder) are
+   single-use and likewise not tokens.
+2. The off-stall item's 9×9 family square is filled with the **field** colour (`--f-*`) while
+   sitting on the kraft slat, where the family filter chip in the same situation uses the **mark**
+   colour. It is a solid swatch and not type, so no contrast threshold is breached, but it is an
+   inconsistency against the Two-Role Produce Rule as written. Recorded as observed, not smoothed:
+   the rule is the system, the square is the exception, and the square should move to `--m-*`.
+3. `.row--garden .row__title { color: var(--ink) }` restates the default rather than changing it.
+   It is harmless and reads as a deliberate note-to-self that this row is not demoted the way
+   `.row--off` is, but it is not a live declaration and is documented above as intent, not effect.
 4. The direction contract says "1px rules" and "squared corners". The built world uses 1px as the
    hairline default but 2px and 3px as deliberate structural weights, and a 2px chamfer on controls.
    The build is recorded; the contract's phrasing was the ambition, not the measurement.
+
+FIXED SINCE THE LAST PASS — previously recorded here, now resolved in the build and removed:
+- `--kraft` / `--kraft-2` are gone from `:root`; a comment now explains that the slat's base and
+  grain live inside the SVG data URI, which cannot read custom properties.
+- `#E8C46A`, `#58614F` and `#4A5247` are tokenized as `--caution`, `--slate-edge` and `--slate-rule`.
+- The FLIP re-lay now runs: `withRelay()` queries `.crate[data-crop]` and the `<article>` carries
+  `data-crop`. The built-world note under Motion has been removed and the section now describes
+  observed behaviour.
 -->

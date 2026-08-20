@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-08-20T11:56:50Z",
+  "generatedAt": "2026-08-20T12:17:16Z",
   "title": "Design System: PlantLife",
   "extensions": {
     "colorMeta": {
@@ -481,7 +481,7 @@
       {
         "name": "relay",
         "value": "transform .52s cubic-bezier(.16, 1, .3, 1)",
-        "purpose": "The one authored motion moment: the stall physically re-laying itself when place, month, family, or hidden set changes. FLIP - measure, render, invert, play back once. NOTE: currently inert in the build; withRelay() selects '.crate[data-id]' but data-id sits on the crate's child buttons."
+        "purpose": "The one authored motion moment: the stall physically re-laying itself when the composition of the stall changes - place, month, family filter, a crop going off the stall or coming back, or a stage being set or cleared. FLIP - measure '.crate[data-crop]', render, invert, play back once. Changes confined to a single crate (taking it into the garden, opening it) re-render in place and do not relay."
       },
       {
         "name": "settle",
@@ -592,6 +592,30 @@
       "css": ".ds-crate-held { border-color: var(--ink, #171A16); border-bottom-color: var(--ink, #171A16); } .ds-crate-held .ds-crate-produce { padding-bottom: 1.4rem; } .ds-crate-held .ds-crate-produce::after { content: 'hold'; position: absolute; left: 0; right: 0; bottom: 0; background: var(--ink, #171A16); color: var(--ground, #E4E7DE); font-size: .625rem; font-stretch: 80%; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: .12rem .85rem; } .ds-crate-held .ds-crate-line { font-weight: 600; }"
     },
     {
+      "name": "Crate — staged by the grower",
+      "kind": "custom",
+      "refersTo": "crate-stagebar",
+      "description": "The grower's own record overruling the calendar. Same overrule slot and the same ink-on-family-colour bar as HOLD, carrying the stage word instead; the crate moves to the 'Growing now' row and its sentence switches from advice to report.",
+      "html": "<article class=\"ds-crate ds-crate-staged\" style=\"--field: var(--f-leaf, #39752A)\"><span class=\"ds-crate-produce\"><span class=\"ds-crate-class\">annual</span><span class=\"ds-crate-name\">Coriander<span class=\"ds-crate-pt\">coentros</span></span><span class=\"ds-crate-stagebar\">Sown</span></span><span class=\"ds-crate-label\"><span class=\"ds-crate-line\">Sown 5 Aug — harvest from about 14 Sep</span></span></article>",
+      "css": ".ds-crate-staged { border-color: var(--ink, #171A16); border-bottom-color: var(--ink, #171A16); } .ds-crate-staged .ds-crate-produce { padding-bottom: 1.4rem; } .ds-crate-stagebar { position: absolute; left: 0; right: 0; bottom: 0; background: var(--ink, #171A16); color: var(--ground, #E4E7DE); font-size: .625rem; font-stretch: 80%; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; padding: .12rem .85rem; } .ds-crate-staged .ds-crate-line { font-weight: 600; }"
+    },
+    {
+      "name": "Stage Control",
+      "kind": "custom",
+      "refersTo": "stage-btn",
+      "description": "Inside the opened crate: 'What have you actually done?' over a wrapping row of stage buttons, a dashed clear, and — once a stage is set — a native date input themed into the palette. Stages are enumerated from the crop's own class, so a control never offers a state the crop cannot occupy.",
+      "html": "<div class=\"ds-stage\"><span class=\"ds-stage-head\">What have you actually done?</span><div class=\"ds-stage-row\"><button class=\"ds-stage-btn\" aria-pressed=\"true\">Sown</button><button class=\"ds-stage-btn\" aria-pressed=\"false\">Planted out</button><button class=\"ds-stage-btn\" aria-pressed=\"false\">Harvesting</button><button class=\"ds-stage-btn\" aria-pressed=\"false\">Finished</button><button class=\"ds-stage-btn ds-stage-btn-clear\">Not started</button></div><label class=\"ds-stage-when\">Sown on<input class=\"ds-stage-date\" type=\"date\" value=\"2026-08-20\"></label><p class=\"ds-stage-note\">Days to maturity for this crop run 70–95, so the window above is an estimate from your date, not a promise.</p></div>",
+      "css": ".ds-stage { font-family: Archivo, system-ui, sans-serif; background: #CEC6B2; padding: .7rem .85rem .9rem; border-top: 1px solid var(--kraft-edge, #A79C81); display: grid; gap: .45rem; } .ds-stage-head { font-size: .6875rem; font-stretch: 84%; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3, #3E453B); } .ds-stage-row { display: flex; flex-wrap: wrap; gap: .3rem; } .ds-stage-btn { font-family: inherit; font-size: .6875rem; font-stretch: 86%; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; background: transparent; color: var(--ink-3, #3E453B); border: 1px solid var(--kraft-edge, #A79C81); padding: .35rem .55rem; cursor: pointer; } .ds-stage-btn:hover { border-color: var(--ink, #171A16); color: var(--ink, #171A16); } .ds-stage-btn[aria-pressed=\"true\"] { background: var(--ink, #171A16); border-color: var(--ink, #171A16); color: var(--ground, #E4E7DE); } .ds-stage-btn:focus-visible { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: 2px; } .ds-stage-btn-clear { border-style: dashed; } .ds-stage-when { display: flex; align-items: center; gap: .45rem; flex-wrap: wrap; font-size: .6875rem; font-stretch: 84%; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3, #3E453B); } .ds-stage-date { font-family: inherit; font-size: .8125rem; font-stretch: 92%; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink, #171A16); background: var(--ground, #E4E7DE); border: 1px solid var(--kraft-edge, #A79C81); padding: .3rem .4rem; } .ds-stage-date:focus { border-color: var(--ink, #171A16); outline: none; } .ds-stage-date::-webkit-calendar-picker-indicator { filter: saturate(0) brightness(.35); cursor: pointer; } .ds-stage-note { margin: 0; font-size: .6875rem; font-stretch: 90%; line-height: 1.4; color: var(--ink-3, #3E453B); max-width: 46ch; text-transform: none; letter-spacing: 0; }"
+    },
+    {
+      "name": "Drop Control (“I don’t grow this”)",
+      "kind": "button",
+      "refersTo": "crate-drop",
+      "description": "The last control in an opened crate. Labelled in the grower's words, not the software's, and it prints its own side effect on itself before the press when the crop is also in the garden. No confirm dialog follows; the crop lands in the reversal row.",
+      "html": "<button class=\"ds-drop\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M6 6l12 12\"/><path d=\"M18 6 6 18\"/></svg>I don’t grow this<span class=\"ds-drop-note\">also takes it out of your garden</span></button>",
+      "css": ".ds-drop { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; width: 100%; font-family: Archivo, system-ui, sans-serif; font-size: .75rem; font-stretch: 88%; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; background: transparent; color: var(--ink-3, #3E453B); border: 1px solid var(--kraft-edge, #A79C81); padding: .45rem .6rem; cursor: pointer; text-align: left; } .ds-drop:hover { background: var(--ink, #171A16); border-color: var(--ink, #171A16); color: var(--ground, #E4E7DE); } .ds-drop:focus-visible { outline: 3px solid var(--f-fruiting, #C4302B); outline-offset: 2px; } .ds-drop svg { width: 13px; height: 13px; flex: 0 0 auto; } .ds-drop-note { flex: 1 0 100%; font-size: .6875rem; font-weight: 400; letter-spacing: .01em; text-transform: none; color: inherit; opacity: .95; }"
+    },
+    {
       "name": "Basket Chip",
       "kind": "chip",
       "refersTo": "basket-chip",
@@ -638,17 +662,17 @@
     "rules": [
       {
         "name": "The Two-Role Produce Rule",
-        "body": "Every crop-family hue exists twice — --f-* for a filled plane that takes chalk type, --m-* for the same hue standing on the limewash ground. Choose by what the colour is sitting on, never by preference. A field colour used as a rule on the ground, or a mark colour used as a plane, breaks the measurement.",
+        "body": "Every crop-family hue exists twice — `--f-*` for a filled plane that takes chalk type, `--m-*` for the same hue standing on the limewash ground. Choose by what the colour is sitting *on*, never by preference. A field colour used as a rule on the ground, or a mark colour used as a plane, breaks the measurement.",
         "section": "colors"
       },
       {
         "name": "The Never-Hue-Alone Rule",
-        "body": "No state in this system is carried by colour alone, anywhere. Out of season is zinc and a smaller crate name and a lighter bottom border and the sentence 'Next window opens 15 Jan'. A held crop is ink-bordered and carries a printed HOLD bar across the bottom of its produce band and says why. In your garden is a 2px ink border and a check-marked IN GARDEN tag. Add the redundant signal before you reach for the hue.",
+        "body": "No state in this system is carried by colour alone, anywhere. Out of season is zinc *and* a smaller crate name *and* a lighter bottom border *and* the sentence \"Next window opens 15 Jan\". A held crop is ink-bordered *and* carries a printed `HOLD` bar across the bottom of its produce band *and* says why. A staged crop is ink-bordered *and* carries the stage word printed in that same bar *and* sits in its own row *and* reports a date instead of advising one. In your garden is a 2px ink border *and* a check-marked \"IN GARDEN\" tag. Add the redundant signal before you reach for the hue. Verified against the build: none of the crate's four states — held, staged, picked, closed — is separable by hue, and the produce band's hue continues to mean only crop family.",
         "section": "colors"
       },
       {
         "name": "The Measured 4.5 Rule",
-        "body": "Every foreground/background pair in this palette was solved to at least 4.5:1 by measurement, including composited grounds. A new colour joins the system by being measured against the exact surface it will land on — including any alpha wash over it — not by looking dark enough.",
+        "body": "Every foreground/background pair in this palette was solved to ≥4.5:1 by measurement, including composited grounds. A new colour joins the system by being measured against the exact surface it will land on — including any alpha wash over it — not by looking dark enough.",
         "section": "colors"
       },
       {
@@ -663,47 +687,77 @@
       },
       {
         "name": "The Width-Tracks-Role Rule",
-        "body": "Width is a semantic axis, not a fitting tool. Display and headline type is expanded (104–118%) because it is signage; body sits near normal (92–96%); controls and micro-labels are condensed (74–88%) because they are stencilled. The one principled inversion is the crate name at 78% — it is signage, but it lives in a fixed-width band, and the band wins.",
+        "body": "Width is a semantic axis, not a fitting tool. Display and headline type is **expanded** (104–118%) because it is signage; body sits near normal (92–96%); controls and micro-labels are **condensed** (74–88%) because they are stencilled. The one principled inversion is the crate name at 78% — it is signage, but it lives in a fixed-width band, and the band wins.",
         "section": "typography"
       },
       {
         "name": "The Tight-Uppercase Rule",
-        "body": "Uppercase display type always carries negative tracking (−0.01em to −0.03em); uppercase label type always carries positive tracking (+0.04em to +0.16em). Large caps need closing up, small caps need opening out. Never ship uppercase at default tracking.",
+        "body": "Uppercase display type always carries negative tracking (−0.01em to −0.03em); uppercase *label* type always carries positive tracking (+0.04em to +0.16em). Large caps need closing up, small caps need opening out. Never ship uppercase at default tracking.",
         "section": "typography"
       },
       {
         "name": "The Sticky Claim Rule",
-        "body": "The board and the month rail never leave the screen. They are the product's claim (this place, this month) and everything below them is an answer to them. A new screen inherits both, or it is not part of this product.",
+        "body": "The board and the month rail never leave the screen. They are the product's claim (\"this place, this month\") and everything below them is an answer to them. A new screen inherits both, or it is not part of this product.",
         "section": "layout"
       },
       {
         "name": "The One-Measure Rule",
-        "body": "Every band aligns to the same 92rem measure and the same gutter, even when its background is full-bleed. Do not introduce a second content width.",
+        "body": "Every band aligns to the same `92rem` measure and the same gutter, even when its background is full-bleed. Do not introduce a second content width.",
         "section": "layout"
       },
       {
         "name": "The No-Light Rule",
-        "body": "No box-shadow for depth, ever — no ambient shadow, no offset shadow, no glow, no filter: drop-shadow. If something must come forward, change its material, thicken its rule, or invert it to an ink plane.",
+        "body": "No `box-shadow` for depth, ever — no ambient shadow, no offset shadow, no glow, no `filter: drop-shadow`. If something must come forward, change its material, thicken its rule, or invert it to an ink plane.",
         "section": "elevation"
       },
       {
         "name": "The Ink-Inversion Rule",
-        "body": "The system's pressed / active / open treatment is a full inversion to an ink plane with ground-coloured type — the selected family mark, the opened crate's foot bar, the hover state of every drop and put-back control. It is the only promotion the system has, and it is binary. There is no half-step.",
+        "body": "The system's \"pressed / active / open\" treatment is a full inversion to an ink plane with ground-coloured type — the selected family mark, the opened crate's foot bar, the hover state of every drop and put-back control. It is the only promotion the system has, and it is binary. There is no half-step.",
         "section": "elevation"
       },
       {
         "name": "The 2px Chamfer Rule",
-        "body": "0 for anything that holds content, 2px for anything you press or type into. There is no third radius.",
+        "body": "`0` for anything that holds content, `2px` for anything you press or type into. There is no third radius.",
         "section": "shapes"
       },
       {
         "name": "The Fixed Field Rule",
-        "body": "The crate grid is held by fixed field heights, not by equal card heights: a uniform produce band min-height, a uniform bar height, a uniform foot bar, and an absolute min-height on the dated sentence. That, plus align-items: start on the grid, is what lets a single crate open in place without stretching its row. Never reach for equal-height rows or a stretch alignment to tidy a grid — pin the fields instead.",
+        "body": "The crate grid is held by **fixed field heights**, not by equal card heights: a uniform produce band `min-height`, a uniform bar height, a uniform foot bar, and an absolute `min-height` on the dated sentence. That, plus `align-items: start` on the grid, is what lets a single crate open in place without stretching its row. Never reach for equal-height rows or a stretch alignment to tidy a grid — pin the fields instead.",
         "section": "components"
       },
       {
         "name": "The Two-Button Crate Rule",
-        "body": "Take and open are separate controls with separate aria semantics (aria-pressed on take, aria-expanded on open). A composite object that has two actions is a container with two buttons, never one button that guesses at intent.",
+        "body": "Take and open are separate controls with separate `aria` semantics (`aria-pressed` on take, `aria-expanded` on open). A composite object that has two actions is a container with two buttons, never one button that guesses at intent.",
+        "section": "components"
+      },
+      {
+        "name": "The Overrule Slot Rule",
+        "body": "There is exactly one place on a crate where something that outranks the calendar is printed: a full-width ink bar with ground-coloured micro type, flush to the bottom edge of the produce band, with the band's padding growing to `1.4rem` to hold it. Two things claim that slot — the weather (`HOLD`) and the grower's own record (the stage word) — and they are drawn to a single identical spec on purpose, because they are the same kind of statement: *the calendar is not the last word here*. They are mutually exclusive by construction; the grower's record wins, and the only thing that distinguishes them is the word in the bar and the row the crate is sitting in. A third overruling source joins the same bar, in the same ink-on-family-colour, or it does not ship.",
+        "section": "components"
+      },
+      {
+        "name": "The Report-Don't-Advise Rule",
+        "body": "A crate that knows nothing about the grower gives advice from the calendar (\"Sow now — window closes 30 Sep\"). A staged crate stops advising and reports from what it was told (\"Sown 5 Aug — harvest from about 14 Sep\", \"Harvesting since 28 Jul\"). Once the grower has told the system something, the system never talks over them with its own guess.",
+        "section": "components"
+      },
+      {
+        "name": "The Offered-Stages Rule",
+        "body": "The stage row only ever offers stages the crop can physically reach: an annual that can be started indoors offers sown / planted out / harvesting / finished; a direct-sown annual drops \"planted out\"; a perennial offers planted / cropping / finished. A control that offers a state its subject cannot occupy is a lie the interface tells; enumerate from the crop's own class, never from a fixed list.",
+        "section": "components"
+      },
+      {
+        "name": "The Progressive Record Rule",
+        "body": "The control reveals itself in three steps — question, then date, then caveat — and each step appears only once the previous one has an answer. No empty date field waits for a stage that has not been chosen; no caveat explains an estimate that is not on screen.",
+        "section": "components"
+      },
+      {
+        "name": "The Land-It-Somewhere Rule",
+        "body": "Any removal in this system lands in a visible row, keeps its identity there, and is reversible from where it landed — both one at a time and all at once. There is no confirm dialog anywhere in this product, and there does not need to be: nothing is destroyed, so nothing needs guarding.",
+        "section": "components"
+      },
+      {
+        "name": "The Themed-Native Rule",
+        "body": "Prefer the native control and theme it into the world; do not rebuild it as a custom widget to get the look. Every browser-drawn surface a screen touches — selection, caret, accent, scrollbar, focus ring, and any shadow-DOM part a native input exposes — is claimed by the palette rather than left at its default. A stock blue or a stock colour picker glyph is a hole in the world, and the fix is a filter or a token, never a replacement widget.",
         "section": "components"
       },
       {
@@ -713,34 +767,50 @@
       }
     ],
     "dos": [
-      "Do pick the produce role by what the colour sits on: --f-* for a filled plane taking chalk type, --m-* for the hue standing on the limewash ground.",
-      "Do measure any new colour against the exact composited surface it will land on, alpha washes included — that is why --ink-3 exists at 5.3:1 where --ink-2 would have shipped at 3.83:1.",
-      "Do give every state at least two channels: colour plus wording, plus position or a printed mark.",
-      "Do set new type on the Archivo width axis — expanded (104–118%) for signage, ~92–96% for prose, condensed (74–88%) for controls and micro-labels.",
-      "Do close up uppercase display type (negative tracking) and open out uppercase label type (positive tracking).",
-      "Do hold grids with fixed field heights and align-items: start, so one item can expand without disturbing its neighbours.",
-      "Do join any new sticky band to the measured --board-h chain rather than hard-coding an offset.",
-      "Do land every destructive action somewhere visible and reversible from the row it lands in.",
-      "Do draw new icons on the 24x24 grid at 1.75 stroke with round caps, in the same authored set.",
-      "Do state uncertainty in the interface — the medium-confidence caveat, the out-of-area note, the 'working from the calendar alone' line, and the storage disclosure are design elements, not disclaimers to be tucked away."
+      "**Do** pick the produce role by what the colour sits on: `--f-*` for a filled plane taking chalk type, `--m-*` for the hue standing on the limewash ground.",
+      "**Do** measure any new colour against the exact composited surface it will land on, alpha washes included — that is why `--ink-3` exists at 5.3:1 where `--ink-2` would have shipped at 3.83:1.",
+      "**Do** give every state at least two channels: colour plus wording, plus position or a printed mark.",
+      "**Do** set new type on the Archivo width axis — expanded (104–118%) for signage, ~92–96% for prose, condensed (74–88%) for controls and micro-labels.",
+      "**Do** close up uppercase display type (negative tracking) and open out uppercase label type (positive tracking).",
+      "**Do** hold grids with fixed field heights and `align-items: start`, so one item can expand without disturbing its neighbours.",
+      "**Do** join any new sticky band to the measured `--board-h` chain rather than hard-coding an offset.",
+      "**Do** land every destructive action somewhere visible and reversible from the row it lands in — one at a time and all at once — instead of guarding it with a confirm dialog.",
+      "**Do** print a control's side effect on the control itself, before the press, in the smaller sentence-case register (\"also takes it out of your garden\").",
+      "**Do** let what the grower recorded outrank what the system computed: move that crate above the advice rows, and switch its sentence from advice to report.",
+      "**Do** print anything that overrules the calendar in the crate's one overrule slot — the ink bar across the bottom of the produce band — in ground-coloured micro type.",
+      "**Do** enumerate a control's options from its subject's own class, so it never offers a state the subject cannot occupy.",
+      "**Do** theme the browser's own widgets into the palette — including the shadow-DOM parts of a native input — rather than rebuilding the control to get the look.",
+      "**Do** reuse the quiet panel for any empty stall, whatever emptied it.",
+      "**Do** draw new icons on the 24×24 grid at `1.75` stroke with round caps, in the same authored set.",
+      "**Do** state uncertainty in the interface — the medium-confidence caveat, the out-of-area note, the \"working from the calendar alone\" line, and the storage disclosure are design elements, not disclaimers to be tucked away."
     ],
     "donts": [
-      "Don't use a box-shadow for depth. The system has no light source; change the material, thicken the rule, or invert to an ink plane instead.",
-      "Don't exceed a 2px radius, and don't put a radius on anything that holds content.",
-      "Don't introduce a second typeface, an icon font, or an emoji. The width axis replaces the second family.",
-      "Don't let a produce hue decorate a control that isn't a crop; the fruiting-red accent on focus, caret, selection, active month and the solid button's hover is the whole chromatic UI budget.",
-      "Don't use --zinc for anything that is in season — it means 'drained', and only that.",
-      "Don't put setup, or any prerequisite, on a route in front of the stall. A missing input is a state of the board, not a door.",
-      "Don't nest an interactive control inside another interactive control; make the container an <article> and give each action its own button and its own aria state.",
-      "Don't solve a ragged grid with equal-height rows or stretch alignment.",
-      "Don't animate anything other than the re-lay for longer than 0.16s, and don't add entrance or scroll-triggered motion.",
-      "Don't show an empty result as a failure. An empty front row gets a designed panel with the reason in the grower's terms, the next real date, and the way to it."
+      "**Don't** use a `box-shadow` for depth. The system has no light source; change the material, thicken the rule, or invert to an ink plane instead.",
+      "**Don't** exceed a `2px` radius, and don't put a radius on anything that holds content.",
+      "**Don't** introduce a second typeface, an icon font, or an emoji. The width axis replaces the second family.",
+      "**Don't** let a produce hue decorate a control that isn't a crop; the fruiting-red accent on focus, caret, selection, active month and the solid button's hover is the whole chromatic UI budget.",
+      "**Don't** use `--zinc` for anything that is in season — it means \"drained\", and only that.",
+      "**Don't** put setup, or any prerequisite, on a route in front of the stall. A missing input is a state of the board, not a door.",
+      "**Don't** nest an interactive control inside another interactive control; make the container an `<article>` and give each action its own button and its own `aria` state.",
+      "**Don't** solve a ragged grid with equal-height rows or stretch alignment.",
+      "**Don't** animate anything other than the re-lay for longer than 0.16s, and don't add entrance or scroll-triggered motion.",
+      "**Don't** show an empty result as a failure. An empty front row gets a designed panel with the reason in the grower's terms, the next real date, and the way to it.",
+      "**Don't** open a dialog to confirm a removal, or anything else. Nothing here is destroyed, so nothing needs guarding; the reversal row is the confirmation.",
+      "**Don't** stack two badges in one produce band. If the stage bar is saying the crop is in the garden, the IN GARDEN tag comes off.",
+      "**Don't** invent a second place for \"the calendar is overruled here\". There is one bar, at the bottom of the produce band, and a new overruling source shares it or does not ship.",
+      "**Don't** animate a change that lives inside a single crate. The re-lay is for the stall recomposing, not for a badge or a disclosure.",
+      "**Don't** name a control after the software's verb when the grower has a sentence for it. \"I don't grow this\" and \"What have you actually done?\" beat \"Hide\" and \"Status\"."
     ],
     "notCanonized": [
-      "--kraft (#CEC6B2) and --kraft-2 (#C2B9A2) are declared in :root and never referenced. #CEC6B2 is the slat tile's base fill but is written literally inside the SVG data URI, so the token has no live binding; #C2B9A2 is unused entirely. Not recorded as system tokens — wire them up or delete them.",
-      "Three reused literals are not tokenized: #E8C46A (caution amber, 2 uses), #E7EADF (the colour-mix partner behind every harvest tint, 3 uses), #58614F (the on-slate field border, 2 uses). Only the amber is promoted to a frontmatter token, because only it is a recurring system role.",
-      "The FLIP re-lay in withRelay() never runs: it selects '.crate[data-id]' but the rendered crate is <article class=\"crate\"> with data-id on its two child buttons, so nothing matches and .is-relaying is never applied. Documented as the system's intended and only motion moment, not as observed behaviour.",
+      "One reused literal is still untokenized: #E7EADF, the colour-mix partner behind every harvest tint (3 uses). It is a composition detail rather than a palette entry; #C9CFC2 (the empty season-bar cell) and #9AA394 (the field placeholder) are single-use and likewise not tokens.",
+      "The off-stall item's 9x9 family square is filled with the field colour (--f-*) while sitting on the kraft slat, where the family filter chip in the same situation uses the mark colour (--m-*). It is a solid swatch and not type, so no contrast threshold is breached, but it is an inconsistency against the Two-Role Produce Rule as written. Recorded as observed, not smoothed: the rule is the system, the square is the exception.",
+      ".row--garden .row__title { color: var(--ink) } restates the default rather than changing it. Harmless, and it reads as a deliberate note that this row is not demoted the way .row--off is, but it is not a live declaration.",
       "The direction contract says '1px rules' and 'squared corners'. The build uses 1px as the hairline default but 2px and 3px as deliberate structural weights, and a 2px chamfer on every control. The build is recorded; the contract's phrasing was the ambition, not the measurement."
+    ],
+    "fixedSinceLastPass": [
+      "--kraft / --kraft-2 are gone from :root; a comment now explains that the slat's base and grain live inside the SVG data URI, which cannot read custom properties.",
+      "#E8C46A, #58614F and #4A5247 are tokenized as --caution, --slate-edge and --slate-rule.",
+      "The FLIP re-lay now runs: withRelay() queries '.crate[data-crop]' and the <article> carries data-crop. The previous built-world note under Motion has been removed and the section now describes observed behaviour."
     ]
   }
 }

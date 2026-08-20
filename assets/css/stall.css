@@ -385,7 +385,7 @@ body {
   padding: .35rem .6rem; font-size: .8125rem; font-stretch: 92%; font-weight: 600;
 }
 .offstall__name::before {
-  content: ''; width: 9px; height: 9px; background: var(--field); flex: 0 0 auto;
+  content: ''; width: 9px; height: 9px; background: var(--mark); flex: 0 0 auto;
 }
 .offstall__back {
   font: inherit; font-size: .6875rem; font-stretch: 86%; font-weight: 600;
@@ -419,7 +419,6 @@ body {
 .crate--staged .crate__produce { padding-bottom: 1.4rem; }
 .crate--staged { border-color: var(--ink); border-bottom-color: var(--ink); }
 .crate--staged .crate__line { font-weight: 600; }
-.row--garden .row__title { color: var(--ink); }
 
 .stage {
   margin-top: .75rem; padding-top: .7rem; border-top: 1px solid var(--kraft-edge);
