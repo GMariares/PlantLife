@@ -63,6 +63,7 @@
     frost: null,         // { last, first } grower override
     basket: [],
     hidden: [],
+    stages: {},
     month: new Date().getMonth(),
     monthPinned: false,
     family: 'all',
@@ -87,12 +88,13 @@
       if (s.frost) state.frost = s.frost;
       if (Array.isArray(s.basket)) state.basket = s.basket;
       if (Array.isArray(s.hidden)) state.hidden = s.hidden;
+      if (s.stages && typeof s.stages === 'object') state.stages = s.stages;
     } catch (e) { /* corrupt or unavailable storage is not fatal; start fresh */ }
   }
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        location: state.location, frost: state.frost, basket: state.basket, hidden: state.hidden
+        location: state.location, frost: state.frost, basket: state.basket, hidden: state.hidden, stages: state.stages
       }));
     } catch (e) { /* private mode: the session still works, it just will not persist */ }
   }
@@ -123,6 +125,11 @@
     return S.doy(pad(state.month + 1) + '-15');
   }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function todayISO() {
+    var d = new Date();
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+  function stageOf(id) { return state.stages[id] || null; }
   function fmt(mmdd) {
     if (!mmdd) return '—';
     return S.label(S.doy(mmdd));
@@ -355,10 +362,12 @@
     var open = st.status === 'urgent' || st.status === 'open' || st.status === 'held';
     var picked = state.basket.indexOf(c.id) !== -1;
     var isOpen = state.opened === c.id;
+    var rep = e.report || null;
     var cls = ['crate'];
-    if (st.status === 'urgent') cls.push('crate--urgent');
-    if (st.status === 'held') cls.push('crate--held');
-    if (!open) cls.push('crate--closed');
+    if (rep) cls.push('crate--staged');
+    if (st.status === 'urgent' && !rep) cls.push('crate--urgent');
+    if (st.status === 'held' && !rep) cls.push('crate--held');
+    if (!open && !rep) cls.push('crate--closed');
     if (picked) cls.push('crate--picked');
     if (isOpen) cls.push('crate--open');
 
@@ -399,13 +408,14 @@
         '<span class="crate__produce">' +
           '<span class="crate__class">' + (c.kind === 'perennial' ? 'perennial' : 'annual') + '</span>' +
           '<span class="crate__name">' + esc(c.name) + '<span class="crate__pt">' + esc(c.pt) + '</span></span>' +
+          (rep ? '<span class="crate__stagebar">' + esc(rep.label) + '</span>' : '') +
         '</span>' +
         '<span class="crate__label">' +
           '<span class="bar" aria-hidden="true">' + bar + '</span>' +
           '<span class="bar__months" aria-hidden="true">' + months + '</span>' +
-          '<span class="crate__line">' + esc(st.line) + '</span>' +
+          '<span class="crate__line">' + esc(rep ? rep.line : st.line) + '</span>' +
         '</span>' +
-        (picked ? '<span class="crate__picked">' + icon('check') + 'In garden</span>' : '') +
+        (picked && !rep ? '<span class="crate__picked">' + icon('check') + 'In garden</span>' : '') +
       '</button>' +
       '<button class="crate__more" type="button" data-act="open" data-id="' + c.id + '"' +
         ' aria-expanded="' + isOpen + '">' +
@@ -425,12 +435,41 @@
         (c.confidence === 'medium'
           ? '<p class="crate__caveat">' + icon('frost') + 'Timing for this crop varies widely across the region — treat these dates as a starting point, not a fixed schedule.</p>'
           : '') +
+        stageControls(c, rep) +
         '<button class="crate__drop" type="button" data-act="hide" data-id="' + c.id + '">' +
           icon('close') + 'I don’t grow this' +
           (picked ? '<span class="crate__drop-note">also takes it out of your garden</span>' : '') +
         '</button>' +
       '</div>' : '') +
       '</article></li>';
+  }
+
+  /* The grower overruling the calendar with what they actually did. Available
+     on any crate, not only ones already in the garden — you cannot record
+     having sown something you were never offered. Setting a stage adds it to
+     the garden, because you cannot be growing what you do not have. */
+  function stageControls(c, rep) {
+    var rec = stageOf(c.id);
+    var stages = S.stagesFor(c);
+    return '<div class="stage">' +
+      '<span class="stage__head">What have you actually done?</span>' +
+      '<div class="stage__row">' +
+        stages.map(function (sg) {
+          var on = rec && rec.stage === sg;
+          return '<button class="stage__btn" type="button" data-act="stage" data-id="' + c.id +
+            '" data-s="' + sg + '" aria-pressed="' + !!on + '">' + esc(S.stageLabel(c, sg)) + '</button>';
+        }).join('') +
+        (rec ? '<button class="stage__btn stage__btn--clear" type="button" data-act="stage-clear" data-id="' +
+               c.id + '">Not started</button>' : '') +
+      '</div>' +
+      (rec ? '<label class="stage__when">' + esc(S.stageLabel(c, rec.stage)) + ' on' +
+        '<input class="stage__date" type="date" data-act="stage-date" data-id="' + c.id +
+        '" value="' + esc(rec.date) + '" max="' + todayISO() + '"></label>' +
+        (rep && rep.expected
+          ? '<p class="stage__note">Days to maturity for this crop run ' + c.dtm[0] + '–' + c.dtm[1] +
+            ', so the window above is an estimate from your date, not a promise.</p>'
+          : '') : '') +
+      '</div>';
   }
 
   function quietHTML(back) {
@@ -470,12 +509,30 @@
         '</div></div></section>';
       return;
     }
-    var groups = S.order(evaluated());
+    var iso = todayISO(), staged = [], unstaged = [];
+    evaluated().forEach(function (e) {
+      var rec = stageOf(e.crop.id);
+      var rep = rec && rec.stage ? S.stageReport(e.crop, rec, iso) : null;
+      if (rep) { e.report = rep; staged.push(e); } else { unstaged.push(e); }
+    });
+    staged.sort(function (a, b) {
+      return a.report.sortKey - b.report.sortKey || a.crop.name.localeCompare(b.crop.name);
+    });
+
+    var groups = S.order(unstaged);
     var front = groups.front, back = groups.back;
     var monthWord = state.monthPinned && state.month !== new Date().getMonth()
       ? 'in ' + S.MONTH_FULL[state.month] : 'this week';
 
-    var html = '<section class="row row--front">' +
+    var html = '';
+    if (staged.length) {
+      html += '<section class="row row--garden">' +
+        '<div class="row__head"><h2 class="row__title">Growing now</h2>' +
+        '<span class="row__count">' + staged.length + ' on the go</span></div>' +
+        '<ul class="crates">' + staged.map(crateHTML).join('') + '</ul></section>';
+    }
+
+    html += '<section class="row row--front">' +
       '<div class="row__head"><h2 class="row__title">Sow ' + esc(monthWord) + '</h2>' +
       '<span class="bar__key"><span><i class="k-sow"></i>sow or plant</span>' +
       '<span><i class="k-harvest"></i>harvest</span>' +
@@ -521,11 +578,19 @@
     var next = null;
     if (picked.length) {
       var sh = shift(), today = referenceDay();
+      var iso2 = todayISO();
       picked.forEach(function (c) {
+        var rec = stageOf(c.id);
+        var rep = rec && rec.stage ? S.stageReport(c, rec, iso2) : null;
+        if (rep) {
+          if (rep.stage === 'done') return;
+          if (!next || rep.sortKey < next.rank) next = { crop: c, line: rep.line, rank: rep.sortKey };
+          return;
+        }
         var st = S.evaluate(c, sh, today, conditions());
         var rank = (st.status === 'urgent' || st.status === 'open') ? st.daysLeft
           : st.status === 'held' ? 500 + st.daysLeft : 1000 + (st.daysUntil || 999);
-        if (!next || rank < next.rank) next = { crop: c, state: st, rank: rank };
+        if (!next || rank < next.rank) next = { crop: c, line: st.line, rank: rank };
       });
     }
 
@@ -534,8 +599,8 @@
       '<div class="basket__label">' + (picked.length === 1 ? 'crop' : 'crops') + ' in your garden</div></div>' +
       '<div class="basket__next">' +
         (next ? '<b>Next:</b> ' + esc(next.crop.name.toLowerCase()) + ' — ' +
-                esc(next.state.line.replace(/^Sow now — window closes/, 'sow by')
-                                   .replace(/^Plant now — window closes/, 'plant by'))
+                esc(next.line.replace(/^Sow now — window closes/, 'sow by')
+                             .replace(/^Plant now — window closes/, 'plant by'))
               : 'Pick a crate and your garden starts here.') +
         '<span class="basket__where">Saved in this browser only — no account, no sync.</span>' +
       '</div>' +
@@ -624,11 +689,25 @@
       var still = document.querySelector('[data-act="open"][data-id="' + state.opened + '"]');
       if (still) still.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
+    else if (act === 'stage') {
+      var sid = t.dataset.id, sg = t.dataset.s, cur = stageOf(sid);
+      if (cur && cur.stage === sg) delete state.stages[sid];
+      else state.stages[sid] = { stage: sg, date: (cur && cur.date) || todayISO() };
+      if (state.stages[sid] && state.basket.indexOf(sid) === -1) state.basket.push(sid);
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
+    }
+    else if (act === 'stage-clear') {
+      delete state.stages[t.dataset.id];
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
+    }
     else if (act === 'hide') {
       var hid = t.dataset.id;
       if (state.hidden.indexOf(hid) === -1) state.hidden.push(hid);
       var inGarden = state.basket.indexOf(hid);
       if (inGarden !== -1) state.basket.splice(inGarden, 1);
+      delete state.stages[hid];
       if (state.opened === hid) state.opened = null;
       save();
       withRelay(function () { renderStall(); renderBasket(); });
@@ -685,6 +764,15 @@
 
     document.addEventListener('click', onClick);
     document.addEventListener('submit', onSubmit);
+    document.addEventListener('change', function (ev) {
+      var d = ev.target.closest('[data-act="stage-date"]');
+      if (!d || !d.value) return;
+      var rec = stageOf(d.dataset.id);
+      if (!rec) return;
+      rec.date = d.value;
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
+    });
     window.addEventListener('resize', measureBoard);
   }
 

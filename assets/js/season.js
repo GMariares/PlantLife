@@ -172,6 +172,83 @@
     return bar;
   }
 
+
+  /* ── What the grower actually did ──────────────────────────────────────
+     The calendar says when a window is open. It cannot know that this crop
+     went in three weeks ago. A stage record is the grower overruling the
+     suggestion with fact, and once it exists the crate stops advising and
+     starts reporting: days-to-maturity finally computes against a real
+     sowing date instead of being printed and ignored.
+
+     Stage dates are absolute ISO days, unlike the windows, which are
+     day-of-year patterns. `todayISO` is passed in so this stays pure. */
+
+  var STAGE_LABEL = {
+    sown: 'Sown', planted: 'Planted out', plantedPerennial: 'Planted',
+    harvesting: 'Harvesting', cropping: 'Cropping', done: 'Finished'
+  };
+
+  /* Only offer stages this crop can actually reach: a direct-sown crop is
+     never "planted out", and a perennial is never sown. */
+  function stagesFor(crop) {
+    if (crop.kind === 'perennial') return ['planted', 'cropping', 'done'];
+    var hasIndoor = crop.sow.some(function (w) { return w.mode === 'indoor'; });
+    return hasIndoor ? ['sown', 'planted', 'harvesting', 'done'] : ['sown', 'harvesting', 'done'];
+  }
+
+  function stageLabel(crop, stage) {
+    if (stage === 'planted' && crop.kind === 'perennial') return STAGE_LABEL.plantedPerennial;
+    return STAGE_LABEL[stage] || stage;
+  }
+
+  function parseISO(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  }
+  function addDays(d, n) { var x = new Date(d.getTime()); x.setDate(x.getDate() + n); return x; }
+  function shortDate(d) { return d.getDate() + ' ' + MONTH_NAMES[d.getMonth()]; }
+  function longDate(d) {
+    var now = new Date();
+    return shortDate(d) + (d.getFullYear() !== now.getFullYear() ? ' ' + d.getFullYear() : '');
+  }
+  function daysBetween(a, b) { return Math.round((b - a) / 86400000); }
+
+  /* The one sentence a staged crate says, and the key it sorts by. */
+  function stageReport(crop, rec, todayISO) {
+    if (!rec || !rec.stage) return null;
+    var when = parseISO(rec.date), today = parseISO(todayISO);
+    if (!when || !today) return null;
+    var label = stageLabel(crop, rec.stage);
+    var out = { stage: rec.stage, label: label, when: when, sortKey: 9e6, expected: null };
+
+    if (rec.stage === 'done') {
+      out.line = 'Finished ' + longDate(when);
+      out.sortKey = 8e6;
+      return out;
+    }
+    if (rec.stage === 'harvesting' || rec.stage === 'cropping') {
+      out.line = label + ' since ' + longDate(when);
+      out.sortKey = -1;                       // happening now: it leads the garden
+      return out;
+    }
+    if (crop.kind === 'perennial') {
+      var y0 = when.getFullYear() + crop.years[0], y1 = when.getFullYear() + crop.years[1];
+      out.line = crop.years[0] === 0
+        ? label + ' ' + longDate(when) + ' — cropping this year'
+        : label + ' ' + longDate(when) + ' — first fruit ' + (y0 === y1 ? y0 : y0 + '–' + y1);
+      out.sortKey = (y0 - today.getFullYear()) * 365;
+      return out;
+    }
+    var from = addDays(when, crop.dtm[0]), to = addDays(when, crop.dtm[1]);
+    var left = daysBetween(today, from);
+    out.expected = { from: from, to: to, daysLeft: left };
+    out.line = left > 0
+      ? label + ' ' + longDate(when) + ' — harvest from about ' + shortDate(from)
+      : label + ' ' + longDate(when) + ' — ready from about ' + shortDate(from);
+    out.sortKey = left;
+    return out;
+  }
+
   var RANK = { urgent: 0, open: 1, held: 2, soon: 3, later: 4, closed: 5 };
 
   /* Front of the stall is ordered by urgency, with ease breaking ties so a
@@ -221,6 +298,7 @@
     within: within, offset: offset, frostShift: frostShift, windowsFor: windowsFor,
     harvestsFor: harvestsFor, evaluate: evaluate, evaluateAll: evaluateAll,
     seasonBar: seasonBar, order: order, quietReason: quietReason,
+    stagesFor: stagesFor, stageLabel: stageLabel, stageReport: stageReport,
     MONTH_NAMES: MONTH_NAMES, MONTH_FULL: MONTH_FULL,
     BASE_LAST_FROST: BASE_LAST_FROST, BASE_FIRST_FROST: BASE_FIRST_FROST,
     MAX_EARLY_SHIFT: MAX_EARLY_SHIFT, MAX_LATE_SHIFT: MAX_LATE_SHIFT
