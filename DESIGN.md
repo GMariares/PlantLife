@@ -765,9 +765,20 @@ nothing animates.
 
 ### Named Rules
 
-**The One-Moment Rule.** The stall re-laying itself is the only authored motion in the product.
-Everything else is a state change under 0.16s. No entrance animations, no staggered reveals, no
-scroll-triggered anything.
+**The One-Grammar Rule** (replaces the former One-Moment Rule, at the owner's
+request for more flair). Motion is no longer a single moment, but it is still a
+single idea: the stall's own physics. Things are WRITTEN ON — chalk wipes left
+to right via `clip-path`, used for the board's place name and for a stage bar
+being recorded; SLID ALONG — the month rail's marker is one element that travels
+between months rather than a border blinking off in one place and on in another;
+and SET DOWN — the FLIP re-lay settles crates from `scale(1.03)` with a stagger
+proportional to distance travelled, capped at 150ms, the way a hand works across
+a stall. Nothing fades in for decoration. Every animation is bound to an action
+the grower took: the chalk wipe fires only when a location resolves, the stage
+wipe only on the crate just staged (`crate--just-staged`), the tally only when
+the count actually changes, the unroll only when the legend is opened. A render
+triggered by an unrelated action animates nothing. Under `prefers-reduced-motion`
+the travel is dropped and the state changes remain.
 
 ## Do's and Don'ts
 

@@ -196,9 +196,18 @@ body {
   padding: 0 clamp(.5rem, 3vw, 2rem);
 }
 .rail__inner {
-  max-width: 92rem; margin: 0 auto;
+  max-width: 92rem; margin: 0 auto; position: relative;
   display: grid; grid-template-columns: repeat(12, 1fr);
 }
+.rail__marker {
+  position: absolute; left: 0; top: 0; z-index: 0;
+  width: calc(100% / var(--cols, 12)); height: calc(100% / var(--rows, 1));
+  background: var(--ground);
+  border-top: 3px solid var(--f-fruiting);
+  transform: translate(calc(var(--mx, 0) * 100%), calc(var(--my, 0) * 100%));
+  pointer-events: none;
+}
+.rail__month { position: relative; z-index: 1; }
 .rail__month {
   font: inherit; font-size: .75rem; font-stretch: 80%; font-weight: 600;
   letter-spacing: .06em; text-transform: uppercase;
@@ -207,10 +216,7 @@ body {
   position: relative;
 }
 .rail__month:hover { color: var(--ink); background: rgba(23,26,22,.05); }
-.rail__month[aria-pressed="true"] {
-  color: var(--ink); border-top-color: var(--f-fruiting); background: var(--ground);
-  font-weight: 700;
-}
+.rail__month[aria-pressed="true"] { color: var(--ink); font-weight: 700; }
 .rail__month[data-today="true"]::after {
   content: ''; position: absolute; left: 50%; bottom: 3px;
   width: 4px; height: 4px; margin-left: -2px; background: var(--ink-2);
@@ -628,11 +634,53 @@ body {
 .basket__chip:hover { background: var(--chalk); color: var(--slate); }
 .basket__chip svg { width: 11px; height: 11px; }
 
-/* ── The one authored motion moment: the stall re-laying itself ──────── */
+/* ── Motion ───────────────────────────────────────────────────────────────
+   One material idea, from the stall's own physics: things are WRITTEN ON
+   (chalk wipes, clip-path), SLID ALONG (the rail's marker travels), and SET
+   DOWN (crates settle into place). Nothing fades in for decoration, and every
+   move is tied to an action the grower took. */
 @media (prefers-reduced-motion: no-preference) {
-  .is-relaying .crate { transition: transform .52s var(--ease-out), box-shadow .16s var(--ease-out); }
-  .board.is-answered { animation: settle .5s var(--ease-out); }
-  @keyframes settle { from { filter: brightness(1.5); } to { filter: none; } }
+  /* The focal moment: the stall re-laying itself. Crates settle rather than
+     slide flatly, and the ones travelling furthest start a beat later, the way
+     a hand works across a stall. Delay is set per crate in withRelay(). */
+  .is-relaying .crate { transition: transform .5s var(--ease-out); }
+
+  /* Chalk goes on left to right. */
+  .board.is-answered .board__name { animation: chalk-on .55s var(--ease-out) both; }
+  @keyframes chalk-on {
+    from { clip-path: inset(0 100% 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+
+  /* The rail's marker travels between months instead of jumping. */
+  .rail__marker { transition: transform .34s var(--ease-out); }
+
+  /* Taking produce off the stall: a press, not a pop. */
+  .crate__take { transition: transform .12s var(--ease-out); }
+  .crate__take:active { transform: scale(.988); }
+
+  /* A record being written onto the crate — same chalk grammar as the board. */
+  .crate--just-staged .crate__stagebar { animation: chalk-on .42s var(--ease-out) both; }
+
+  /* The tally on the stall's ledger moving. */
+  .basket__count.is-ticking { animation: tally .32s var(--ease-out); }
+  @keyframes tally {
+    from { transform: translateY(-.32em); opacity: 0; }
+    to   { transform: none; opacity: 1; }
+  }
+
+  /* The notice unrolling — only when the grower opens it, never as a side
+     effect of some other render. */
+  .legend__inner.is-opening { animation: unroll .34s var(--ease-out) both; }
+  @keyframes unroll {
+    from { clip-path: inset(0 0 100% 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+}
+
+/* Reduced motion keeps every state change legible and drops the travel. */
+@media (prefers-reduced-motion: reduce) {
+  .rail__marker { transition: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
@@ -655,11 +703,8 @@ body {
   .board .ask__row .btn { padding: .5rem .7rem; font-size: .75rem; }
   .ask__head { font-size: clamp(1.25rem, 6.5vw, 1.75rem); }
   .rail { padding: 0 .25rem; }
-  .rail__month {
-    font-size: .6875rem; padding: .4rem .05rem .3rem;
-    border-top: 0; border-bottom: 3px solid transparent;
-  }
-  .rail__month[aria-pressed="true"] { border-bottom-color: var(--f-fruiting); }
+  .rail__month { font-size: .6875rem; padding: .4rem .05rem .3rem; border-top: 0; }
+  .rail__marker { border-top: 0; border-bottom: 3px solid var(--f-fruiting); }
   .rail__month[data-today="true"]::after { bottom: 5px; }
   .marks {
     padding: .55rem 1rem .1rem;

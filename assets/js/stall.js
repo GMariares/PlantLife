@@ -71,11 +71,13 @@
     stages: {},
     custom: [],
     legend: null,   /* resolved at init from viewport width */
+    legendOpening: false,
     adding: false,
     month: new Date().getMonth(),
     monthPinned: false,
     family: 'all',
     opened: null,
+    justStaged: null,
     weather: null,       // { temp, code, frostRisk, min }
     weatherFailed: false,
     locating: false,
@@ -351,11 +353,25 @@
   function renderRail() {
     var now = new Date().getMonth();
     el.rail.innerHTML = '<div class="rail__inner" role="group" aria-label="Month">' +
+      '<span class="rail__marker" aria-hidden="true"></span>' +
       S.MONTH_NAMES.map(function (m, i) {
         return '<button class="rail__month" type="button" data-act="month" data-i="' + i + '"' +
           ' aria-pressed="' + (i === state.month) + '"' + (i === now ? ' data-today="true"' : '') +
           ' title="' + S.MONTH_FULL[i] + (i === now ? ' — this month' : '') + '">' + m + '</button>';
       }).join('') + '</div>';
+    placeRailMarker();
+  }
+
+  /* Six columns on a phone, twelve above it — the marker reads the grid the
+     buttons are actually laid out on rather than assuming one. */
+  function placeRailMarker() {
+    var inner = el.rail.firstChild, marker = inner && inner.querySelector('.rail__marker');
+    if (!marker) return;
+    var cols = window.innerWidth < 736 ? 6 : 12;
+    inner.style.setProperty('--cols', cols);
+    inner.style.setProperty('--rows', 12 / cols);
+    marker.style.setProperty('--mx', state.month % cols);
+    marker.style.setProperty('--my', Math.floor(state.month / cols));
   }
 
 
@@ -374,7 +390,8 @@
         esc(FAMILIES[k].name) + '</li>';
     }).join('');
 
-    el.legend.innerHTML = toggle + '<div class="legend__inner">' +
+    el.legend.innerHTML = toggle +
+      '<div class="legend__inner' + (state.legendOpening ? ' is-opening' : '') + '">' +
       '<div class="legend__head">' +
         '<h2 class="legend__title">What the colours mean</h2>' +
         '<button class="legend__close" type="button" data-act="legend-close">' + icon('close') + 'Got it</button>' +
@@ -417,6 +434,7 @@
     var rep = e.report || null;
     var cls = ['crate'];
     if (rep) cls.push('crate--staged');
+    if (rep && state.justStaged === c.id) cls.push('crate--just-staged');
     if (st.status === 'urgent' && !rep) cls.push('crate--urgent');
     if (st.status === 'held' && !rep) cls.push('crate--held');
     if (!open && !rep) cls.push('crate--closed');
@@ -718,6 +736,7 @@
     el.stall.innerHTML = html;
   }
 
+  var lastCount = null;
   function renderBasket() {
     var all = catalogue();
     var picked = state.basket.map(function (id) {
@@ -744,8 +763,10 @@
       });
     }
 
+    var ticked = lastCount !== null && lastCount !== picked.length;
+    lastCount = picked.length;
     el.basket.innerHTML = '<div class="basket__inner">' +
-      '<div><div class="basket__count">' + picked.length + '</div>' +
+      '<div><div class="basket__count' + (ticked ? ' is-ticking' : '') + '">' + picked.length + '</div>' +
       '<div class="basket__label">' + (picked.length === 1 ? 'crop' : 'crops') + ' in your garden</div></div>' +
       '<div class="basket__next">' +
         (next ? '<b>Next:</b> ' + esc(next.crop.name.toLowerCase()) + ' — ' +
@@ -780,7 +801,9 @@
       var a = n.getBoundingClientRect();
       var dx = b.left - a.left, dy = b.top - a.top;
       if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
-      n.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+      var dist = Math.hypot(dx, dy);
+      n.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(1.03)';
+      n.style.transitionDelay = Math.min(150, dist * 0.11).toFixed(0) + 'ms';
       moved.push(n);
     });
     if (!moved.length) return;
@@ -788,7 +811,11 @@
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
         moved.forEach(function (n) { n.style.transform = ''; });
-        setTimeout(function () { el.stall.classList.remove('is-relaying'); }, 560);
+        setTimeout(function () {
+          el.stall.classList.remove('is-relaying');
+          moved.forEach(function (n) { n.style.transitionDelay = ''; });
+          state.justStaged = null;
+        }, 700);
       });
     });
   }
@@ -852,13 +879,19 @@
       save();
       withRelay(function () { renderStall(); renderBasket(); });
     }
-    else if (act === 'legend') { state.legend = !state.legend; save(); renderMarks(); renderLegend(); measureBoard(); }
+    else if (act === 'legend') {
+      state.legend = !state.legend;
+      state.legendOpening = state.legend;
+      save(); renderMarks(); renderLegend(); measureBoard();
+      state.legendOpening = false;
+    }
     else if (act === 'legend-close') { state.legend = false; save(); renderMarks(); renderLegend(); measureBoard(); }
     else if (act === 'stage') {
       var sid = t.dataset.id, sg = t.dataset.s, cur = stageOf(sid);
       if (cur && cur.stage === sg) delete state.stages[sid];
       else state.stages[sid] = { stage: sg, date: (cur && cur.date) || todayISO() };
       if (state.stages[sid] && state.basket.indexOf(sid) === -1) state.basket.push(sid);
+      state.justStaged = state.stages[sid] ? sid : null;
       save();
       withRelay(function () { renderStall(); renderBasket(); });
     }
@@ -948,7 +981,7 @@
       save();
       withRelay(function () { renderStall(); renderBasket(); });
     });
-    window.addEventListener('resize', measureBoard);
+    window.addEventListener('resize', function () { measureBoard(); placeRailMarker(); });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
