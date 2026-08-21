@@ -452,6 +452,23 @@ body {
 .stage__date:focus { border-color: var(--ink); outline: none; }
 /* The browser draws this control; it still belongs to the design. */
 .stage__date::-webkit-calendar-picker-indicator { filter: saturate(0) brightness(.35); cursor: pointer; }
+.stage__finish {
+  display: block; width: 100%; text-align: left;
+  font: inherit; font-size: 0.6875rem; font-stretch: 86%; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase;
+  background: transparent; color: var(--ink-3);
+  border: 1px solid var(--kraft-edge); padding: .4rem .55rem; cursor: pointer;
+}
+.stage__finish:hover { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.stage__finish-note {
+  display: block; margin-top: .15rem;
+  font-size: 0.625rem; font-weight: 400; letter-spacing: .01em; text-transform: none;
+}
+.crate__retired {
+  display: block; margin-top: .3rem;
+  font-size: 0.6875rem; font-stretch: 88%; font-weight: 600;
+  letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3);
+}
 .stage__note {
   margin: 0; font-size: 0.6875rem; font-stretch: 90%; line-height: 1.4;
   color: var(--ink-3); max-width: 46ch; text-transform: none; letter-spacing: 0;

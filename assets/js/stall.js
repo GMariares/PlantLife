@@ -414,6 +414,7 @@
           '<span class="bar" aria-hidden="true">' + bar + '</span>' +
           '<span class="bar__months" aria-hidden="true">' + months + '</span>' +
           '<span class="crate__line">' + esc(rep ? rep.line : st.line) + '</span>' +
+          (e.retired ? '<span class="crate__retired">' + esc(e.retired.line) + '</span>' : '') +
         '</span>' +
         (picked && !rep ? '<span class="crate__picked">' + icon('check') + 'In garden</span>' : '') +
       '</button>' +
@@ -469,6 +470,12 @@
           ? '<p class="stage__note">Days to maturity for this crop run ' + c.dtm[0] + '–' + c.dtm[1] +
             ', so the window above is an estimate from your date, not a promise.</p>'
           : '') : '') +
+      (rec && S.finishesByClearing(c)
+        ? '<button class="stage__finish" type="button" data-act="stage-finish" data-id="' + c.id + '">' +
+          'Finished — put it back on the stall' +
+          '<span class="stage__finish-note">Clears this record so it can be sown again next season.</span>' +
+          '</button>'
+        : '') +
       '</div>';
   }
 
@@ -513,7 +520,8 @@
     evaluated().forEach(function (e) {
       var rec = stageOf(e.crop.id);
       var rep = rec && rec.stage ? S.stageReport(e.crop, rec, iso) : null;
-      if (rep) { e.report = rep; staged.push(e); } else { unstaged.push(e); }
+      if (rep && !rep.retired) { e.report = rep; staged.push(e); }
+      else { if (rep) e.retired = rep; unstaged.push(e); }
     });
     staged.sort(function (a, b) {
       return a.report.sortKey - b.report.sortKey || a.crop.name.localeCompare(b.crop.name);
@@ -583,7 +591,7 @@
         var rec = stageOf(c.id);
         var rep = rec && rec.stage ? S.stageReport(c, rec, iso2) : null;
         if (rep) {
-          if (rep.stage === 'done') return;
+          if (rep.retired) return;
           if (!next || rep.sortKey < next.rank) next = { crop: c, line: rep.line, rank: rep.sortKey };
           return;
         }
@@ -697,7 +705,7 @@
       save();
       withRelay(function () { renderStall(); renderBasket(); });
     }
-    else if (act === 'stage-clear') {
+    else if (act === 'stage-clear' || act === 'stage-finish') {
       delete state.stages[t.dataset.id];
       save();
       withRelay(function () { renderStall(); renderBasket(); });

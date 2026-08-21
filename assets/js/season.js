@@ -185,16 +185,22 @@
 
   var STAGE_LABEL = {
     sown: 'Sown', planted: 'Planted out', plantedPerennial: 'Planted',
-    harvesting: 'Harvesting', cropping: 'Cropping', done: 'Finished'
+    harvesting: 'Harvesting', cropping: 'Cropping', removed: 'Removed'
   };
 
   /* Only offer stages this crop can actually reach: a direct-sown crop is
      never "planted out", and a perennial is never sown. */
   function stagesFor(crop) {
-    if (crop.kind === 'perennial') return ['planted', 'cropping', 'done'];
+    if (crop.kind === 'perennial') return ['planted', 'cropping', 'removed'];
     var hasIndoor = crop.sow.some(function (w) { return w.mode === 'indoor'; });
-    return hasIndoor ? ['sown', 'planted', 'harvesting', 'done'] : ['sown', 'harvesting', 'done'];
+    return hasIndoor ? ['sown', 'planted', 'harvesting'] : ['sown', 'harvesting'];
   }
+
+  /* Finishing means different things to the two classes, so it is not one
+     control. An annual that is over is released back to the stall — it will be
+     sown again next season, and the record of this one has served its purpose.
+     A perennial that is over was taken out, which is a fact worth keeping. */
+  function finishesByClearing(crop) { return crop.kind !== 'perennial'; }
 
   function stageLabel(crop, stage) {
     if (stage === 'planted' && crop.kind === 'perennial') return STAGE_LABEL.plantedPerennial;
@@ -221,8 +227,12 @@
     var label = stageLabel(crop, rec.stage);
     var out = { stage: rec.stage, label: label, when: when, sortKey: 9e6, expected: null };
 
-    if (rec.stage === 'done') {
-      out.line = 'Finished ' + longDate(when);
+    /* A removed perennial is not growing, so it leaves the garden row and goes
+       back to being advice — but the record stays on the crate, because the
+       grower may well plant another and should not lose what happened. */
+    if (rec.stage === 'removed') {
+      out.line = 'Removed ' + longDate(when);
+      out.retired = true;
       out.sortKey = 8e6;
       return out;
     }
@@ -299,6 +309,7 @@
     harvestsFor: harvestsFor, evaluate: evaluate, evaluateAll: evaluateAll,
     seasonBar: seasonBar, order: order, quietReason: quietReason,
     stagesFor: stagesFor, stageLabel: stageLabel, stageReport: stageReport,
+    finishesByClearing: finishesByClearing,
     MONTH_NAMES: MONTH_NAMES, MONTH_FULL: MONTH_FULL,
     BASE_LAST_FROST: BASE_LAST_FROST, BASE_FIRST_FROST: BASE_FIRST_FROST,
     MAX_EARLY_SHIFT: MAX_EARLY_SHIFT, MAX_LATE_SHIFT: MAX_LATE_SHIFT

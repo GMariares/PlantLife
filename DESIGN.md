@@ -598,7 +598,7 @@ from field to **mark** colour so they stay legible against the drained band.
   sentence at 600 weight naming the forecast temperature.
 - **Staged** (the grower's own record overruling the calendar) — ink border on all sides, a
   full-width ink **stage bar** across the bottom of the produce band carrying the stage word
-  (`SOWN`, `PLANTED OUT`, `HARVESTING`, `CROPPING`, `PLANTED`, `FINISHED`), the same `1.4rem` band
+  (`SOWN`, `PLANTED OUT`, `HARVESTING`, `CROPPING`, `PLANTED`, `REMOVED`), the same `1.4rem` band
   padding, sentence at 600 weight, and the crate moves into the "Growing now" row. Staged
   suppresses urgent, held and closed entirely: a crate the grower has spoken about is never also
   drained to zinc or told to hold.
@@ -636,6 +636,16 @@ told the system something, the system never talks over them with its own guess.
 
 ### The Stage Control
 
+**The Finish-Diverges Rule.** Finishing is not one control, because it does not
+mean one thing. An annual that is over is an *action*: "Finished — put it back on
+the stall" clears the record and returns the crop to the advice rows, since it
+will be sown again next season and this season's record has served its purpose.
+A perennial that is over is a *state*: `removed` is a stage like any other, it
+keeps its date, and the crate carries "Removed <date>" quietly beneath the advice
+rather than in the ink overrule slot — a plant that is gone is not overruling the
+calendar. A retired crop leaves the Growing-now row but stays in the garden list,
+so the grower can plant another without losing what happened to the last one.
+
 Inside the opened panel, above a `1px` kraft-edge rule: an uppercase ink-3 label type question —
 **"What have you actually done?"**, phrased as a question and not as a field name — over a wrapping
 row of stage buttons.
@@ -657,8 +667,10 @@ row of stage buttons.
   promise." It appears only when an expected-harvest window is actually being shown.
 
 **The Offered-Stages Rule.** The stage row only ever offers stages the crop can physically reach:
-an annual that can be started indoors offers sown / planted out / harvesting / finished; a
-direct-sown annual drops "planted out"; a perennial offers planted / cropping / finished. A control
+an annual that can be started indoors offers sown / planted out / harvesting; a
+direct-sown annual drops "planted out"; a perennial offers planted / cropping / removed.
+Finishing an annual is a separate action rather than a fourth toggle — see the
+Finish-Diverges Rule. A control
 that offers a state its subject cannot occupy is a lie the interface tells; enumerate from the
 crop's own class, never from a fixed list.
 
