@@ -15,7 +15,12 @@
   var S = window.PlantLifeSeason;
   var DATA = window.PlantLifeCrops;
   var GEO = window.PlantLifeRegions;
-  var CROPS = DATA.CROPS, FAMILIES = DATA.FAMILIES;
+  var FAMILIES = DATA.FAMILIES;
+  /* The shipped set plus the grower's own entries. A custom crop carries the
+     dates its owner gave it and is marked as theirs, because PlantLife has no
+     authority over timings it did not source. */
+  function catalogue() { return DATA.CROPS.concat(state.custom); }
+  var CROPS = DATA.CROPS;
 
   var STORE_KEY = 'plantlife.v1';
   var GEOCODE = 'https://geocoding-api.open-meteo.com/v1/search';
@@ -64,6 +69,9 @@
     basket: [],
     hidden: [],
     stages: {},
+    custom: [],
+    legend: null,   /* resolved at init from viewport width */
+    adding: false,
     month: new Date().getMonth(),
     monthPinned: false,
     family: 'all',
@@ -89,12 +97,15 @@
       if (Array.isArray(s.basket)) state.basket = s.basket;
       if (Array.isArray(s.hidden)) state.hidden = s.hidden;
       if (s.stages && typeof s.stages === 'object') state.stages = s.stages;
+      if (Array.isArray(s.custom)) state.custom = s.custom;
+      if (typeof s.legendSeen === 'boolean') state.legend = !s.legendSeen;
     } catch (e) { /* corrupt or unavailable storage is not fatal; start fresh */ }
   }
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
-        location: state.location, frost: state.frost, basket: state.basket, hidden: state.hidden, stages: state.stages
+        location: state.location, frost: state.frost, basket: state.basket, hidden: state.hidden, stages: state.stages,
+        custom: state.custom, legendSeen: !state.legend
       }));
     } catch (e) { /* private mode: the session still works, it just will not persist */ }
   }
@@ -218,14 +229,15 @@
 
   // ── Evaluation ───────────────────────────────────────────────────────────
   function visibleCrops() {
-    return CROPS.filter(function (c) {
+    return catalogue().filter(function (c) {
       if (state.hidden.indexOf(c.id) !== -1) return false;
       return state.family === 'all' || c.family === state.family;
     });
   }
   function hiddenCrops() {
+    var all = catalogue();
     return state.hidden.map(function (id) {
-      for (var i = 0; i < CROPS.length; i++) if (CROPS[i].id === id) return CROPS[i];
+      for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
       return null;
     }).filter(Boolean);
   }
@@ -346,6 +358,46 @@
       }).join('') + '</div>';
   }
 
+
+  function swatch(kind, label) {
+    return '<li class="legend__row"><span class="legend__swatch legend__swatch--' + kind + '"></span>' +
+      '<span class="legend__text">' + label + '</span></li>';
+  }
+
+  function renderLegend() {
+    var toggle = '<div class="legend__bar">' +
+      '<button class="legend__toggle" type="button" data-act="legend" aria-expanded="' + state.legend + '">' +
+      (state.legend ? 'Hide the key' : 'What the colours mean') + '</button></div>';
+    if (!state.legend) { el.legend.innerHTML = toggle; return; }
+    var fam = Object.keys(FAMILIES).map(function (k) {
+      return '<li class="legend__fam"><span class="legend__chip" style="background:var(--m-' + k + ')"></span>' +
+        esc(FAMILIES[k].name) + '</li>';
+    }).join('');
+
+    el.legend.innerHTML = toggle + '<div class="legend__inner">' +
+      '<div class="legend__head">' +
+        '<h2 class="legend__title">What the colours mean</h2>' +
+        '<button class="legend__close" type="button" data-act="legend-close">' + icon('close') + 'Got it</button>' +
+      '</div>' +
+      '<div class="legend__cols">' +
+        '<div class="legend__group"><h3 class="legend__sub">The twelve-month bar</h3><ul class="legend__list">' +
+          swatch('sow', 'Sow or plant this month') +
+          swatch('harvest', 'Harvest this month') +
+          swatch('none', 'Neither — nothing to do') +
+          swatch('now', 'The month you are looking at') +
+        '</ul></div>' +
+        '<div class="legend__group"><h3 class="legend__sub">The crates</h3><ul class="legend__list">' +
+          swatch('open', 'Full colour — you can sow it now') +
+          swatch('shut', 'Drained to grey — not this month') +
+          swatch('bar', 'Black bar — HOLD, or what you have recorded') +
+        '</ul>' +
+        '<p class="legend__note">Colour never carries a state on its own: the wording, the position on the ' +
+        'stall and the crate\u2019s border say the same thing.</p></div>' +
+        '<div class="legend__group"><h3 class="legend__sub">The eight families</h3>' +
+        '<ul class="legend__fams">' + fam + '</ul></div>' +
+      '</div></div>';
+  }
+
   function renderMarks() {
     var keys = Object.keys(FAMILIES);
     el.marks.innerHTML =
@@ -428,13 +480,20 @@
         '<dl class="facts">' +
           '<div><dt>' + (c.kind === 'perennial' ? 'Plant' : 'Sow') + '</dt><dd>' + esc(wins) + '</dd></div>' +
           '<div><dt>Harvest</dt><dd>' + esc(harv) + '</dd></div>' +
-          '<div><dt>Spacing</dt><dd>' + c.spacing + ' cm apart</dd></div>' +
-          '<div><dt>Water</dt><dd>' + c.water + '</dd></div>' +
-          '<div><dt>Light</dt><dd>' + (c.sun === 'full' ? 'full sun' : 'sun or part shade') + '</dd></div>' +
+          (c.custom ? '' :
+            '<div><dt>Spacing</dt><dd>' + c.spacing + ' cm apart</dd></div>' +
+            '<div><dt>Water</dt><dd>' + c.water + '</dd></div>' +
+            '<div><dt>Light</dt><dd>' + (c.sun === 'full' ? 'full sun' : 'sun or part shade') + '</dd></div>') +
         '</dl>' +
         '<p class="crate__note">' + esc(c.note) + '</p>' +
         (c.confidence === 'medium'
           ? '<p class="crate__caveat">' + icon('frost') + 'Timing for this crop varies widely across the region — treat these dates as a starting point, not a fixed schedule.</p>'
+          : '') +
+        (c.custom
+          ? '<button class="crate__drop" type="button" data-act="own-remove" data-id="' + c.id + '">' +
+            icon('close') + 'Delete this crop' +
+            '<span class="crate__drop-note">You added it, so removing it takes the entry away for good.</span>' +
+            '</button>'
           : '') +
         stageControls(c, rep) +
         '<button class="crate__drop" type="button" data-act="hide" data-id="' + c.id + '">' +
@@ -477,6 +536,89 @@
           '</button>'
         : '') +
       '</div>';
+  }
+
+
+  /* ── A crop the stall does not carry ──────────────────────────────────────
+     PlantLife will not invent timings, so a grower-added crop carries the
+     grower's own dates and is marked as theirs. The form asks in months
+     because that is how a grower thinks about a sowing window. */
+  function monthOptions(sel) {
+    return S.MONTH_FULL.map(function (m, i) {
+      return '<option value="' + (i + 1) + '"' + (sel === i + 1 ? ' selected' : '') + '>' + m + '</option>';
+    }).join('');
+  }
+
+  function addForm() {
+    if (!state.adding) {
+      return '<button class="btn btn--dark" type="button" data-act="add-open">' +
+        'Add a crop the stall does not have</button>';
+    }
+    var fams = Object.keys(FAMILIES).map(function (k) {
+      return '<option value="' + k + '">' + esc(FAMILIES[k].name) + '</option>';
+    }).join('');
+    return '<form class="addcrop" data-act="add-form">' +
+      '<h3 class="addcrop__title">Add your own crop</h3>' +
+      '<p class="addcrop__note">PlantLife only ships dates it can stand behind, so this one uses ' +
+      'yours. Give it the months you actually sow and harvest it, and it behaves like any other crate.</p>' +
+      '<div class="addcrop__grid">' +
+        '<label class="addcrop__field addcrop__field--wide">Name' +
+          '<input class="field field--light" name="name" required maxlength="40" placeholder="Pak choi"></label>' +
+        '<label class="addcrop__field">Local name <span class="addcrop__opt">optional</span>' +
+          '<input class="field field--light" name="pt" maxlength="40" placeholder="couve-pak-choi"></label>' +
+        '<label class="addcrop__field">Family' +
+          '<select class="field field--light" name="family">' + fams + '</select></label>' +
+        '<label class="addcrop__field">Type' +
+          '<select class="field field--light" name="kind">' +
+            '<option value="annual">Annual — sown each year</option>' +
+            '<option value="perennial">Perennial — planted once</option>' +
+          '</select></label>' +
+        '<label class="addcrop__field">Frost-tender?' +
+          '<select class="field field--light" name="tender">' +
+            '<option value="no">No — it takes a frost</option>' +
+            '<option value="yes">Yes — hold it until the frosts pass</option>' +
+          '</select></label>' +
+        '<fieldset class="addcrop__pair"><legend class="addcrop__legend">Sow or plant window</legend>' +
+          '<select class="field field--light" name="sowFrom" aria-label="Sow from">' + monthOptions(9) + '</select>' +
+          '<span class="addcrop__to">until</span>' +
+          '<select class="field field--light" name="sowTo" aria-label="Sow until">' + monthOptions(10) + '</select>' +
+        '</fieldset>' +
+        '<fieldset class="addcrop__pair"><legend class="addcrop__legend">Harvest window</legend>' +
+          '<select class="field field--light" name="harvFrom" aria-label="Harvest from">' + monthOptions(11) + '</select>' +
+          '<span class="addcrop__to">until</span>' +
+          '<select class="field field--light" name="harvTo" aria-label="Harvest until">' + monthOptions(2) + '</select>' +
+        '</fieldset>' +
+        '<label class="addcrop__field">Days to first harvest' +
+          '<input class="field field--light" type="number" name="dtm" min="7" max="2000" value="60"></label>' +
+      '</div>' +
+      '<div class="addcrop__actions">' +
+        '<button class="btn btn--solid btn--onlight" type="submit">Put it on the stall</button>' +
+        '<button class="btn btn--dark" type="button" data-act="add-cancel">Cancel</button>' +
+      '</div></form>';
+  }
+
+  var LAST_DAY = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  function monthStart(m) { return pad(m) + '-01'; }
+  function monthEnd(m) { return pad(m) + '-' + LAST_DAY[m - 1]; }
+
+  function createCrop(f) {
+    var name = (f.name.value || '').trim();
+    if (!name) return null;
+    var kind = f.kind.value, tender = f.tender.value === 'yes';
+    var id = 'own-' + name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + state.custom.length;
+    var dtm = Math.max(7, Math.min(2000, parseInt(f.dtm.value, 10) || 60));
+    var crop = {
+      id: id, name: name, pt: (f.pt.value || '').trim() || name.toLowerCase(),
+      family: f.family.value, kind: kind, ease: 2, tender: tender, custom: true,
+      sow: [{ mode: kind === 'perennial' ? 'plant' : 'direct',
+              from: monthStart(+f.sowFrom.value), to: monthEnd(+f.sowTo.value) }],
+      harvest: [{ from: monthStart(+f.harvFrom.value), to: monthEnd(+f.harvTo.value) }],
+      note: 'Your own entry. These dates are the ones you gave, not PlantLife\u2019s.',
+      confidence: 'yours'
+    };
+    if (kind === 'perennial') crop.years = [Math.max(0, Math.round(dtm / 365)), Math.max(1, Math.round(dtm / 365))];
+    else crop.dtm = [dtm, Math.round(dtm * 1.25)];
+    return crop;
   }
 
   function quietHTML(back) {
@@ -542,9 +684,7 @@
 
     html += '<section class="row row--front">' +
       '<div class="row__head"><h2 class="row__title">Sow ' + esc(monthWord) + '</h2>' +
-      '<span class="bar__key"><span><i class="k-sow"></i>sow or plant</span>' +
-      '<span><i class="k-harvest"></i>harvest</span>' +
-      '<span class="row__count">' + front.length + ' open</span></span></div>' +
+      '<span class="row__count">' + front.length + ' open</span></div>' +
       (front.length
         ? '<ul class="crates">' + front.map(crateHTML).join('') + '</ul>'
         : quietHTML(back)) +
@@ -574,12 +714,14 @@
         '</section>';
     }
 
+    html += '<section class="row row--add">' + addForm() + '</section>';
     el.stall.innerHTML = html;
   }
 
   function renderBasket() {
+    var all = catalogue();
     var picked = state.basket.map(function (id) {
-      for (var i = 0; i < CROPS.length; i++) if (CROPS[i].id === id) return CROPS[i];
+      for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
       return null;
     }).filter(Boolean);
 
@@ -659,6 +801,7 @@
     renderBoard();
     renderRail();
     renderMarks();
+    renderLegend();
     renderStall();
     renderBasket();
     measureBoard();
@@ -697,6 +840,20 @@
       var still = document.querySelector('[data-act="open"][data-id="' + state.opened + '"]');
       if (still) still.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     }
+    else if (act === 'add-open') { state.adding = true; renderStall(); }
+    else if (act === 'add-cancel') { state.adding = false; renderStall(); }
+    else if (act === 'own-remove') {
+      var oid = t.dataset.id;
+      state.custom = state.custom.filter(function (c) { return c.id !== oid; });
+      state.basket = state.basket.filter(function (x) { return x !== oid; });
+      state.hidden = state.hidden.filter(function (x) { return x !== oid; });
+      delete state.stages[oid];
+      if (state.opened === oid) state.opened = null;
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
+    }
+    else if (act === 'legend') { state.legend = !state.legend; save(); renderMarks(); renderLegend(); measureBoard(); }
+    else if (act === 'legend-close') { state.legend = false; save(); renderMarks(); renderLegend(); measureBoard(); }
     else if (act === 'stage') {
       var sid = t.dataset.id, sg = t.dataset.s, cur = stageOf(sid);
       if (cur && cur.stage === sg) delete state.stages[sid];
@@ -745,6 +902,14 @@
     ev.preventDefault();
     if (f.dataset.act === 'search-form') {
       search(f.querySelector('input[name=q]').value.trim());
+    } else if (f.dataset.act === 'add-form') {
+      var made = createCrop(f);
+      if (!made) return;
+      state.custom.push(made);
+      state.adding = false;
+      state.opened = made.id;
+      save();
+      withRelay(function () { renderStall(); renderBasket(); });
     } else if (f.dataset.act === 'frost-form') {
       var last = f.querySelector('input[name=last]').value.trim();
       var first = f.querySelector('input[name=first]').value.trim();
@@ -763,10 +928,12 @@
     el.board = document.getElementById('board');
     el.rail = document.getElementById('rail');
     el.marks = document.getElementById('marks');
+    el.legend = document.getElementById('legend');
     el.stall = document.getElementById('stall');
     el.basket = document.getElementById('basket');
 
     load();
+    if (state.legend === null) state.legend = window.innerWidth >= 736;
     render();
     if (state.location) loadWeather();
 
