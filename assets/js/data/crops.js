@@ -343,5 +343,12 @@
       'Fast, hungry climber. Cut it back hard each spring or it becomes a thicket.', 'medium')
   ];
 
+  /* Sow-little-and-often crops, named as such in their own notes: a batch
+     every few weeks beats one big sowing. The week ledger reads this flag. */
+  ['lettuce', 'rocket', 'radish', 'spinach', 'springonion', 'coriander', 'greenbean']
+    .forEach(function (id) {
+      for (var i = 0; i < CROPS.length; i++) if (CROPS[i].id === id) CROPS[i].succession = true;
+    });
+
   global.PlantLifeCrops = { CROPS: CROPS, FAMILIES: FAMILIES };
 }(window));

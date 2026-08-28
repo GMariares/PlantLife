@@ -241,6 +241,100 @@ body {
 .mark__chip { width: 9px; height: 9px; flex: 0 0 auto; background: currentColor; }
 .mark[data-family] .mark__chip { background: var(--chip); }
 
+/* ── The two faces of the surface: browse the stall, or work the week ──── */
+.viewbar { background: var(--ground); border-bottom: 1px solid var(--kraft-edge); padding: 0 clamp(1rem, 4vw, 2.5rem); }
+.viewbar__inner { max-width: 92rem; margin: 0 auto; display: flex; gap: .25rem; }
+.viewbar__tab {
+  font: inherit; font-size: 0.8125rem; font-stretch: 96%; font-weight: 700;
+  letter-spacing: .05em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: .45rem;
+  background: transparent; color: var(--ink-2);
+  border: 0; border-bottom: 3px solid transparent;
+  padding: .65rem .9rem .5rem; cursor: pointer;
+}
+.viewbar__tab:hover { color: var(--ink); }
+.viewbar__tab[aria-pressed="true"] { color: var(--ink); border-bottom-color: var(--ink); }
+.viewbar__count {
+  min-width: 1.35rem; text-align: center;
+  background: var(--f-fruiting); color: var(--chalk);
+  font-size: 0.6875rem; font-stretch: 90%; padding: .1rem .3rem;
+}
+
+/* ── The week ledger ─────────────────────────────────────────────────────── */
+.week { max-width: 92rem; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 2.5rem); }
+.week__head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.week__title {
+  margin: 0; font-size: clamp(1.5rem, 4vw, 2rem); font-stretch: 112%; font-weight: 700;
+  letter-spacing: -.02em; text-transform: uppercase; line-height: 1;
+}
+.week__span { font-size: 0.8125rem; font-stretch: 90%; color: var(--ink-2); letter-spacing: .03em; text-transform: uppercase; }
+.week__note { margin: 0 0 1rem; font-size: 0.875rem; font-stretch: 96%; color: var(--ink-2); max-width: 62ch; }
+.week .quiet { margin-top: 1.5rem; }
+
+.row--tasks .row__head { border-bottom-width: 1px; border-bottom-color: var(--kraft-edge); }
+.row--tasks .row__title { font-size: 1rem; }
+.tasks { list-style: none; margin: 0; padding: 0; }
+.task { border-bottom: 1px solid var(--kraft-edge); }
+.task__row {
+  display: flex; align-items: baseline; gap: .65rem; flex-wrap: wrap;
+  padding: .7rem .25rem; cursor: pointer; min-height: 44px;
+}
+.task__row:hover { background: rgba(23, 26, 22, .04); }
+.task__check { width: 18px; height: 18px; flex: 0 0 auto; align-self: center; cursor: pointer; }
+.task__chip { width: 10px; height: 10px; flex: 0 0 auto; background: var(--mark, var(--ink-2)); align-self: center; }
+.task__chip--care { background: transparent; box-shadow: inset 0 0 0 2px var(--ink-2); }
+.task__line {
+  font-size: 0.9375rem; font-stretch: 96%; flex: 1 1 18rem; min-width: 0;
+  background: linear-gradient(var(--ink-2), var(--ink-2)) no-repeat 0 58% / 0% 2px;
+  transition: background-size .3s var(--ease-out);
+}
+.task--done .task__line { background-size: 100% 2px; color: var(--ink-2); }
+.task__places { display: inline-flex; gap: .25rem; }
+.task__places i {
+  font-style: normal; font-size: 0.6875rem; font-stretch: 86%; font-weight: 700;
+  letter-spacing: .06em; background: var(--ink); color: var(--ground); padding: .1rem .35rem;
+}
+.task__writes {
+  flex: 0 1 auto; font-size: 0.6875rem; font-stretch: 88%; color: var(--ink-3);
+  letter-spacing: .02em;
+}
+.row--done .task__row { cursor: default; }
+
+/* ── Growing places ─────────────────────────────────────────────────────── */
+.row--places { margin-bottom: 1rem; }
+.places { list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: .5rem; max-width: 46rem; }
+.place {
+  display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+  border: 1px solid var(--kraft-edge); background: var(--ground-deep); padding: .5rem .65rem;
+}
+.place__id {
+  font-size: 0.8125rem; font-stretch: 90%; font-weight: 700; letter-spacing: .06em;
+  background: var(--mark, var(--ink)); color: var(--chalk); padding: .15rem .45rem;
+}
+.place__kind, .place__zone { font-size: 0.75rem; font-stretch: 88%; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3); }
+.place__zone { border-left: 1px solid var(--kraft-edge); padding-left: .6rem; }
+.place__crop { flex: 0 1 12rem; min-width: 8rem; margin-left: auto; }
+.place__warn { flex: 1 0 100%; font-size: 0.75rem; font-stretch: 92%; color: var(--m-fruiting); font-weight: 600; }
+.place__remove {
+  background: transparent; border: 1px solid var(--kraft-edge); color: var(--ink-3);
+  width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; flex: 0 0 auto;
+}
+.place__remove:hover { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.place__remove svg { width: 13px; height: 13px; }
+.placeform { display: flex; align-items: end; gap: .6rem; flex-wrap: wrap; }
+.placeform .addcrop__field { flex: 0 1 13rem; }
+.placeform__btn { padding: .55rem .9rem; }
+
+@media (max-width: 46rem) {
+  .viewbar { padding: 0 .5rem; }
+  .viewbar__tab { flex: 1 1 auto; justify-content: center; padding: .6rem .5rem .45rem; }
+  .place__crop { flex-basis: 100%; margin-left: 0; }
+  .task__places { flex: 1 0 100%; margin-left: calc(18px + .65rem + 10px + .65rem); }
+  .task__writes { flex-basis: 100%; padding-left: calc(18px + .65rem + 10px + .65rem); }
+  .placeform__btn { flex: 1 1 100%; }
+}
+
 /* ── The legend ───────────────────────────────────────────────────────────
    The stall encodes a lot in colour. This says what, in the stall's own
    materials, and gets out of the way once it has been read. */

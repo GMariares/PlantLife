@@ -2,68 +2,58 @@
 version: 1
 slug: "index-html"
 primary_target: "index.html"
-related_targets: ["assets/js/stall.js","assets/css/stall.css"]
+related_targets: ["assets/js/stall.js","assets/js/tasks.js","assets/css/stall.css"]
 ---
 
 ## Scope and mode
 
-The home surface, and its first-run state. Mode: **Operate** — success is a completed task, not a
-persuaded reader. There is deliberately no separate setup route: with location as the only required
-input, a dedicated setup page would be a door in front of a door, so first run is the same stall
-before it knows where you are.
+The home surface, now with two faces behind one sticky board. Mode: **Operate** on both.
+
+- **The stall** — browse and plan: the crop market laid out for this latitude and month.
+- **This week** — do: a task ledger computed from the same truth, adopted from the grower's own
+  "Project Perafita" notes (weekly routine, succession sowing, container IDs and zones).
+
+There is still no separate setup route: first run is the stall before it knows where you are.
 
 ## Audience and job
 
-A home food grower, most often on a phone, plausibly outdoors in bright sun with dirty hands, and
-in February at a kitchen table planning a season. They arrive curious and unconvinced and will not
-fill in a form to find out whether this is worth it.
-
-The task: set location, then pick the first crops. Success is leaving with a location, roughly one
-to eight crops chosen, and one unambiguous next action carrying a real date.
+A home food grower on a phone, outdoors, or planning at a table. Two distinct moments now have
+distinct faces: "what could I grow" (stall) and "I have ten minutes, what needs me" (week).
 
 ## The proof this surface owes
 
-That PlantLife knows *this place, right now*. When location resolves the stall must visibly change —
-crates reorder, dates appear, today's conditions land on the board. A grower who cannot tell the
-difference between this and a printed calendar has not been given the product.
+That PlantLife knows this place, right now — and, on the week face, that every task line traces
+to something real: an open window, the grower's own dated record, this week's forecast, or the
+grower's own project notes. No invented chores.
 
 ## Direction and memorable moment
 
-**Banca** — the Iberian mercado stall, where what is on the stall is what is in season. Crops
-sowable now sit forward at full produce colour; the rest set back in board grey, still legible and
-still pickable.
+Banca, unchanged — the ledger inherits the world (ink rules, chalk grammar, family colour as
+data). The stall's memorable moment remains the month-rail re-lay; the week's is the tick that
+writes: checking "sow the kale" records the sowing, and the line strikes through left to right in
+the written-on grammar.
 
-The memorable moment is the **month rail**: one axis that re-lays the entire stall at once — every
-crate, date, colour state and urgency re-read together — rather than filtering a list. This is
-where "what grows well here across the year" lives without becoming a second page.
+## Structure of the week face
 
-Five disciplines the direction carries, each donated by a rejected alternative: one rigid label grid
-on every crate; the coherent axis re-lay; the app's reasoning printed as content in the flow rather
-than in tooltips; urgency set in type size rather than a coloured pill; a crate that resolves the
-crop completely with no "learn more".
+Tasks grouped Do now / This week / Keep an eye on / Done this week, sorted by urgency. Task kinds:
+window closing (sow/plant), plant-out due, weather hold, harvest-ready (from the grower's dated
+record plus days-to-maturity), succession re-sow (flagged crops, batch older than three weeks,
+window open), and two recurring care checks sourced from the grower's own adviser notes
+(brassica caterpillar patrol Apr–Oct, strawberry tidy Jul–Sep). Done state is per ISO week; a
+new week opens clean.
 
-## Content ranges this layout must survive
-
-24 to ~120 crops in the catalogue (57 today); 0 to ~30 sowable in the shown month; 0 to 40+ crops in
-the basket; crop names from "Kale" to "Purple sprouting broccoli".
-
-## States that are designed, not discovered
-
-No location yet (the board asks; the stall behind it is real, not blank); locating; location denied
-or unavailable — typing a town is equal in weight to the geolocation button, because geolocation is
-refusable and often refused; weather unavailable — falls back to the regional calendar and says so
-on the board; **nothing sowable this month** — a first-class state with its own treatment: the
-reason in the grower's terms, the next real window with its date, and the rail offered as the way
-forward; offline; returning grower; empty and long basket.
+**Growing places**: containers with IDs (P/C/S/W + number), kind, sun profile, and a crop
+assignment from the garden. Task rows carry the place chips. A sourced full-sun crop in a
+sunless place is flagged; custom crops are never flagged, their light needs were never sourced.
 
 ## Constraints binding this surface
 
-No secret can live in a static page, so every data source must be keyless and CORS-enabled. The
-garden lives in this browser only and the basket rail says so. State is never carried by colour
-alone — position, wording and form carry it too, because the surface is read in glare.
+As before: keyless CORS-only data sources, browser-only persistence stated in the basket rail,
+no state carried by colour alone, 44px targets, reduced-motion paths.
 
 ## Unresolved
 
-Which fruit species make the launch set. Where growing space (pot, bed, plot, indoors) re-enters,
-having been deferred out of first run. Reminder delivery, still undecided product-wide. Whether the
-regional frost table is eventually replaced by per-coordinate derivation from climate history.
+Harvest weights and logs (the conversation's five-year record) — out of scope for now, would
+need export to be honest. Rotation history per place. Whether care checks should be
+user-editable. Which fruit species join the launch set. Reminder delivery, still undecided
+product-wide.

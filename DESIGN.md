@@ -765,6 +765,35 @@ nothing animates.
 
 ### Named Rules
 
+### The Week Ledger (the surface's second face)
+
+The home surface has two faces behind one sticky board: **The stall** (browse and
+plan) and **This week** (do). A view bar of two ink-underlined tabs sits directly
+under the board; the week tab carries a `--f-fruiting` count of open tasks. In
+week view the rail, marks, legend and stall are hidden — the board and basket
+rail persist, because the claim and the garden belong to both faces.
+
+The ledger is rows, not crates: hairline-ruled task lines grouped **Do now /
+This week / Keep an eye on / Done this week**, each row a full-width 44px label
+wrapping a themed native checkbox, a 10px family mark (outlined square for
+care tasks that belong to no crop), the sentence, place chips (ink plates:
+`P01`), and a quiet `--ink-3` note naming what ticking writes.
+
+**The Tick-Is-The-Record Rule.** A task that states a fact writes that fact:
+ticking a sowing task records the stage and date; ticking "ready" starts the
+harvest record; ticking a succession task re-dates the batch. The tick and the
+record are never two systems. Care tasks tick for the week only and return the
+next week. Done rows strike through left to right — the written-on grammar —
+via an animated `background-size` underline, and survive within their ISO week
+(`YYYY-Www`); a new week opens a clean page.
+
+**Growing places.** Containers are control rows on quiet `--ground-deep` (not
+slatted — they are rows about crates, not crates), max-width 46rem: an ink
+ID plate coloured by the resident crop's family (`P`/`C`/`S`/`W` + number), kind,
+sun profile (full sun / bright shade / no direct sun), a crop select limited to
+the garden, and a flag when a sourced full-sun crop sits in a sunless place.
+Custom crops are never flagged — their light needs were never sourced.
+
 **The One-Grammar Rule** (replaces the former One-Moment Rule, at the owner's
 request for more flair). Motion is no longer a single moment, but it is still a
 single idea: the stall's own physics. Things are WRITTEN ON — chalk wipes left

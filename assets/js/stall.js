@@ -13,6 +13,7 @@
   'use strict';
 
   var S = window.PlantLifeSeason;
+  var T = window.PlantLifeTasks;
   var DATA = window.PlantLifeCrops;
   var GEO = window.PlantLifeRegions;
   var FAMILIES = DATA.FAMILIES;
@@ -72,6 +73,9 @@
     custom: [],
     legend: null,   /* resolved at init from viewport width */
     legendOpening: false,
+    view: 'stall',
+    containers: [],
+    tasksDone: {},
     adding: false,
     month: new Date().getMonth(),
     monthPinned: false,
@@ -101,13 +105,17 @@
       if (s.stages && typeof s.stages === 'object') state.stages = s.stages;
       if (Array.isArray(s.custom)) state.custom = s.custom;
       if (typeof s.legendSeen === 'boolean') state.legend = !s.legendSeen;
+      if (s.view === 'week' || s.view === 'stall') state.view = s.view;
+      if (Array.isArray(s.containers)) state.containers = s.containers;
+      if (s.tasksDone && typeof s.tasksDone === 'object') state.tasksDone = s.tasksDone;
     } catch (e) { /* corrupt or unavailable storage is not fatal; start fresh */ }
   }
   function save() {
     try {
       localStorage.setItem(STORE_KEY, JSON.stringify({
         location: state.location, frost: state.frost, basket: state.basket, hidden: state.hidden, stages: state.stages,
-        custom: state.custom, legendSeen: !state.legend
+        custom: state.custom, legendSeen: !state.legend,
+        view: state.view, containers: state.containers, tasksDone: state.tasksDone
       }));
     } catch (e) { /* private mode: the session still works, it just will not persist */ }
   }
@@ -143,6 +151,43 @@
     return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
   }
   function stageOf(id) { return state.stages[id] || null; }
+
+  function gardenCrops() {
+    var all = catalogue();
+    return state.basket.map(function (id) {
+      for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
+      return null;
+    }).filter(Boolean);
+  }
+  function weekKey() { return T.isoWeekKey(new Date()); }
+  function doneList() {
+    var wk = weekKey();
+    if (!state.tasksDone[wk]) {
+      /* a new week starts a clean page; only the current one is kept */
+      state.tasksDone = {};
+      state.tasksDone[wk] = [];
+    }
+    return state.tasksDone[wk];
+  }
+  var CONTAINER_KINDS = {
+    planter: { prefix: 'P', label: 'Long planter' },
+    pot:     { prefix: 'C', label: 'Round pot' },
+    small:   { prefix: 'S', label: 'Small pot' },
+    wall:    { prefix: 'W', label: 'Wall / vertical' }
+  };
+  var ZONES = { sun: 'Full sun', part: 'Bright shade', shade: 'No direct sun' };
+  function nextContainerId(kind) {
+    var prefix = CONTAINER_KINDS[kind].prefix, max = 0;
+    state.containers.forEach(function (c) {
+      var m = new RegExp('^' + prefix + '(\\d+)$').exec(c.id);
+      if (m && +m[1] > max) max = +m[1];
+    });
+    return prefix + (max < 9 ? '0' : '') + (max + 1);
+  }
+  function containersFor(cropId) {
+    return state.containers.filter(function (c) { return c.crop === cropId; })
+      .map(function (c) { return c.id; });
+  }
   function fmt(mmdd) {
     if (!mmdd) return '—';
     return S.label(S.doy(mmdd));
@@ -413,6 +458,138 @@
         '<div class="legend__group"><h3 class="legend__sub">The eight families</h3>' +
         '<ul class="legend__fams">' + fam + '</ul></div>' +
       '</div></div>';
+  }
+
+  function deriveWeek() {
+    var now = new Date();
+    return T.derive({
+      crops: gardenCrops(), stages: state.stages, shift: shift(),
+      conditions: conditions(), today: now, todayDoy: S.dateToDoy(now)
+    });
+  }
+
+  function renderViewbar() {
+    var open = deriveWeek().filter(function (t) {
+      return !doneList().some(function (d) { return d.id === t.id; });
+    }).length;
+    el.viewbar.innerHTML = '<div class="viewbar__inner">' +
+      '<button class="viewbar__tab" type="button" data-act="view" data-v="stall"' +
+        ' aria-pressed="' + (state.view === 'stall') + '">The stall</button>' +
+      '<button class="viewbar__tab" type="button" data-act="view" data-v="week"' +
+        ' aria-pressed="' + (state.view === 'week') + '">This week' +
+        (open ? '<span class="viewbar__count">' + open + '</span>' : '') + '</button>' +
+      '</div>';
+  }
+
+  function taskHTML(t, done) {
+    var chips = t.crop ? containersFor(t.crop.id) : [];
+    return '<li class="task' + (done ? ' task--done' : '') + '"' +
+      (t.crop ? ' style="--mark:var(--m-' + t.crop.family + ')"' : '') + '>' +
+      '<label class="task__row">' +
+        '<input class="task__check" type="checkbox" data-act="task" data-id="' + t.id + '"' +
+          (done ? ' checked' : '') + '>' +
+        (t.crop ? '<span class="task__chip" aria-hidden="true"></span>' : '<span class="task__chip task__chip--care" aria-hidden="true"></span>') +
+        '<span class="task__line">' + esc(t.line) + '</span>' +
+        (chips.length ? '<span class="task__places">' + chips.map(function (id) {
+          return '<i>' + esc(id) + '</i>';
+        }).join('') + '</span>' : '') +
+        (t.writes ? '<span class="task__writes">' +
+          (t.writes.stage === 'sown' ? 'ticking records the sowing'
+           : t.writes.stage === 'planted' ? 'ticking records the planting'
+           : t.writes.stage === 'harvesting' ? 'ticking starts the harvest record'
+           : 'ticking re-dates the batch') + '</span>' : '') +
+      '</label></li>';
+  }
+
+  function placeRow(c) {
+    var all = catalogue();
+    var crop = null;
+    for (var i = 0; i < all.length; i++) if (all[i].id === c.crop) crop = all[i];
+    var mismatch = crop && !crop.custom && crop.sun === 'full' && c.zone === 'shade';
+    var opts = '<option value="">— empty —</option>' + gardenCrops().map(function (g) {
+      return '<option value="' + g.id + '"' + (c.crop === g.id ? ' selected' : '') + '>' + esc(g.name) + '</option>';
+    }).join('');
+    return '<li class="place"' + (crop ? ' style="--mark:var(--m-' + crop.family + ')"' : '') + '>' +
+      '<span class="place__id">' + esc(c.id) + '</span>' +
+      '<span class="place__kind">' + CONTAINER_KINDS[c.kind].label + '</span>' +
+      '<span class="place__zone">' + ZONES[c.zone] + '</span>' +
+      '<select class="field field--light place__crop" data-act="place-crop" data-id="' + c.id + '"' +
+        ' aria-label="Crop in ' + esc(c.id) + '">' + opts + '</select>' +
+      (mismatch ? '<span class="place__warn">' + esc(crop.name.toLowerCase()) + ' wants full sun</span>' : '') +
+      '<button class="place__remove" type="button" data-act="place-remove" data-id="' + c.id + '"' +
+        ' aria-label="Remove ' + esc(c.id) + '">' + icon('close') + '</button>' +
+      '</li>';
+  }
+
+  function renderWeek() {
+    if (state.view !== 'week') { el.week.hidden = true; return; }
+    el.week.hidden = false;
+    var tasks = deriveWeek(), done = doneList();
+    var isDone = {};
+    done.forEach(function (d) { isDone[d.id] = true; });
+    var openTasks = tasks.filter(function (t) { return !isDone[t.id]; });
+    var groups = [
+      { title: 'Do now', match: function (t) { return t.urgency === 0; } },
+      { title: 'This week', match: function (t) { return t.urgency === 1 || t.urgency === 2; } },
+      { title: 'Keep an eye on', match: function (t) { return t.urgency === 3; } }
+    ];
+    var now = new Date();
+    var html = '<div class="week__head">' +
+      '<h2 class="week__title">Week ' + weekKey().slice(-2).replace(/^0/, '') + '</h2>' +
+      '<span class="week__span">' + T.weekSpan(now) + ' · ' + esc(state.location ? state.location.name : 'no place set') + '</span>' +
+      '</div>';
+
+    if (!gardenCrops().length) {
+      html += '<div class="quiet"><h3 class="quiet__head">The week is empty because the garden is</h3>' +
+        '<p class="quiet__text">Tasks are computed from the crops you grow — their windows, your records, ' +
+        'this week\u2019s forecast. Pick crops on the stall and the ledger fills itself.</p>' +
+        '<div class="quiet__next"><button class="btn btn--dark" type="button" data-act="view" data-v="stall">Go to the stall</button></div></div>';
+    } else if (!openTasks.length && !done.length) {
+      html += '<div class="quiet"><h3 class="quiet__head">Nothing needs you this week</h3>' +
+        '<p class="quiet__text">No windows closing, nothing due, nothing held. The garden is doing the work — ' +
+        'check back after the weekend, or scrub the stall to plan ahead.</p></div>';
+    } else {
+      groups.forEach(function (g) {
+        var items = openTasks.filter(g.match);
+        if (!items.length) return;
+        html += '<section class="row row--tasks"><div class="row__head">' +
+          '<h3 class="row__title">' + g.title + '</h3>' +
+          '<span class="row__count">' + items.length + '</span></div>' +
+          '<ul class="tasks">' + items.map(function (t) { return taskHTML(t, false); }).join('') + '</ul></section>';
+      });
+      if (done.length) {
+        html += '<section class="row row--tasks row--done"><div class="row__head">' +
+          '<h3 class="row__title">Done this week</h3>' +
+          '<span class="row__count">' + done.length + '</span></div>' +
+          '<ul class="tasks">' + done.map(function (d) {
+            return taskHTML({ id: d.id, line: d.line, crop: null }, true);
+          }).join('') + '</ul></section>';
+      }
+    }
+
+    /* Growing places: the garden as physical spots with their own sun. */
+    html += '<section class="row row--places"><div class="row__head">' +
+      '<h3 class="row__title">Growing places</h3>' +
+      '<span class="row__count">' + state.containers.length + '</span></div>' +
+      (state.containers.length
+        ? '<ul class="places">' + state.containers.map(placeRow).join('') + '</ul>'
+        : '<p class="week__note">Give the garden its places — each planter, pot and stretch of wall gets an ID ' +
+          'and a sun profile, and tasks say where the work is. A full-sun crop in a sunless spot gets flagged.</p>') +
+      '<form class="placeform" data-act="place-add">' +
+        '<label class="addcrop__field">Kind' +
+          '<select class="field field--light" name="kind">' +
+          Object.keys(CONTAINER_KINDS).map(function (k) {
+            return '<option value="' + k + '">' + CONTAINER_KINDS[k].label + '</option>';
+          }).join('') + '</select></label>' +
+        '<label class="addcrop__field">Sun' +
+          '<select class="field field--light" name="zone">' +
+          Object.keys(ZONES).map(function (z) {
+            return '<option value="' + z + '">' + ZONES[z] + '</option>';
+          }).join('') + '</select></label>' +
+        '<button class="btn btn--dark placeform__btn" type="submit">Add a place</button>' +
+      '</form></section>';
+
+    el.week.innerHTML = html;
   }
 
   function renderMarks() {
@@ -826,10 +1003,11 @@
 
   function render(answered) {
     renderBoard();
-    renderRail();
-    renderMarks();
-    renderLegend();
-    renderStall();
+    renderViewbar();
+    var week = state.view === 'week';
+    el.rail.hidden = week; el.marks.hidden = week; el.legend.hidden = week; el.stall.hidden = week;
+    if (!week) { renderRail(); renderMarks(); renderLegend(); renderStall(); }
+    renderWeek();
     renderBasket();
     measureBoard();
     if (answered) {
@@ -866,6 +1044,17 @@
       renderStall();
       var still = document.querySelector('[data-act="open"][data-id="' + state.opened + '"]');
       if (still) still.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+    else if (act === 'view') {
+      state.view = t.dataset.v === 'week' ? 'week' : 'stall';
+      save();
+      render();
+      window.scrollTo(0, 0);
+    }
+    else if (act === 'place-remove') {
+      state.containers = state.containers.filter(function (c) { return c.id !== t.dataset.id; });
+      save();
+      renderWeek();
     }
     else if (act === 'add-open') { state.adding = true; renderStall(); }
     else if (act === 'add-cancel') { state.adding = false; renderStall(); }
@@ -929,6 +1118,35 @@
     }
   }
 
+  function onTask(input) {
+    var id = input.dataset.id, done = doneList();
+    var at = -1;
+    for (var i = 0; i < done.length; i++) if (done[i].id === id) at = i;
+    if (!input.checked) {
+      if (at !== -1) done.splice(at, 1);
+      save();
+      renderViewbar(); renderWeek(); renderBasket();
+      return;
+    }
+    if (at !== -1) return;
+    var task = null;
+    deriveWeek().forEach(function (t) { if (t.id === id) task = t; });
+    if (!task) return;
+    done.push({ id: id, line: task.line });
+    if (task.writes && task.crop) {
+      var cid = task.crop.id;
+      if (task.writes.redate) {
+        var rec = stageOf(cid);
+        if (rec) { rec.stage = 'sown'; rec.date = todayISO(); }
+      } else if (task.writes.stage) {
+        state.stages[cid] = { stage: task.writes.stage, date: todayISO() };
+        if (state.basket.indexOf(cid) === -1) state.basket.push(cid);
+      }
+    }
+    save();
+    renderViewbar(); renderWeek(); renderBasket();
+  }
+
   function onSubmit(ev) {
     var f = ev.target.closest('[data-act]');
     if (!f) return;
@@ -943,6 +1161,12 @@
       state.opened = made.id;
       save();
       withRelay(function () { renderStall(); renderBasket(); });
+    } else if (f.dataset.act === 'place-add') {
+      var kind = f.kind.value, zone = f.zone.value;
+      if (!CONTAINER_KINDS[kind] || !ZONES[zone]) return;
+      state.containers.push({ id: nextContainerId(kind), kind: kind, zone: zone, crop: null });
+      save();
+      renderWeek();
     } else if (f.dataset.act === 'frost-form') {
       var last = f.querySelector('input[name=last]').value.trim();
       var first = f.querySelector('input[name=first]').value.trim();
@@ -959,7 +1183,9 @@
 
   function init() {
     el.board = document.getElementById('board');
+    el.viewbar = document.getElementById('viewbar');
     el.rail = document.getElementById('rail');
+    el.week = document.getElementById('week');
     el.marks = document.getElementById('marks');
     el.legend = document.getElementById('legend');
     el.stall = document.getElementById('stall');
@@ -973,6 +1199,17 @@
     document.addEventListener('click', onClick);
     document.addEventListener('submit', onSubmit);
     document.addEventListener('change', function (ev) {
+      var tk = ev.target.closest('[data-act="task"]');
+      if (tk) { onTask(tk); return; }
+      var pc = ev.target.closest('[data-act="place-crop"]');
+      if (pc) {
+        for (var i = 0; i < state.containers.length; i++) {
+          if (state.containers[i].id === pc.dataset.id) state.containers[i].crop = pc.value || null;
+        }
+        save();
+        renderWeek();
+        return;
+      }
       var d = ev.target.closest('[data-act="stage-date"]');
       if (!d || !d.value) return;
       var rec = stageOf(d.dataset.id);
